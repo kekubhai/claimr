@@ -2,7 +2,6 @@
 
 import React, { ReactNode } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { TextEffect } from "@/components/motion-primitives/text-effect";
 import { AnimatedGroup } from "@/components/motion-primitives/animated-group";
 import DecryptedText from "@/components/DecryptedText";
@@ -54,13 +53,13 @@ const GlowButton = ({
 const Navbar = () => {
     const [menuState, setMenuState] = React.useState(false);
     return (
-        <nav data-state={menuState && 'active'} className="bg-background/50 fixed z-50 w-full p-7 mb-8 top-0">
+        <nav data-state={menuState && 'active'} className="bg-background/50 fixed z-50 w-full border-b border-border/10 backdrop-blur-3xl top-0">
             <div className="mx-auto max-w-7xl px-6 transition-all duration-300">
                 <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
                     <div className="flex w-full items-center justify-between gap-12 lg:w-auto">
                         <Link href="/" className="flex items-center space-x-3">
                             <Web3Logo />
-                            <span className="font-mono text-lg font-bold text-foreground">ClaimR</span>
+                            <span className="font-mono text-lg font-bold text-foreground">Claimr</span>
                         </Link>
                         <button
                             onClick={() => setMenuState(!menuState)}
@@ -70,21 +69,25 @@ const Navbar = () => {
                             <X className="in-data-[state=active]:rotate-0 in-data-[state=active]:scale-100 in-data-[state=active]:opacity-100 absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200" />
                         </button>
                     </div>
-                    <div className="bg-background in-data-[state=active]:block lg:in-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-none border border-white/10 p-6 shadow-2xl md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-8 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none">
+                    <div className="bg-background in-data-[state=active]:block lg:in-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border border-white/10 p-6 shadow-2xl md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-8 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none">
                         <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-6 sm:space-y-0 md:w-fit font-medium text-sm text-muted-foreground">
-                            <Link href="#how-it-works" className="hover:text-foreground font-bold transition-colors">How it Works</Link>
-                            <Link href="#bounties" className="hover:text-foreground font-bold transition-colors">Bounties</Link>
-                            <Link href="#leaderboard" className="hover:text-foreground font-bold transition-colors">Leaderboard</Link>
-                            <Link href="#docs" className="hover:text-foreground font-bold transition-colors">Docs</Link>
+                            <Link href="#how-it-works" className="hover:text-foreground transition-colors">How it Works</Link>
+                            <Link href="#bounties" className="hover:text-foreground transition-colors">Bounties</Link>
+                            <Link href="#leaderboard" className="hover:text-foreground transition-colors">Leaderboard</Link>
+                            <Link href="#docs" className="hover:text-foreground transition-colors">Docs</Link>
                         </div>
-                        <a
-                href="/auth/login"
-              >
-                <GlowButton >
-                            Sign in
-                </GlowButton>
-              </a>
-                        
+                        <button className="bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6 text-white inline-block">
+                            <span className="absolute inset-0 overflow-hidden rounded-full">
+                                <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(99,102,241,0.6)_0%,rgba(99,102,241,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                            </span>
+                            <Link href="/api/auth/login?returnTo=/dashboard" className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-4 ring-1 ring-white/10">
+                                <span>Connect Wallet</span>
+                                <svg fill="none" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10.75 8.75L14.25 12L10.75 15.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                                </svg>
+                            </Link>
+                            <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-indigo-400/0 via-indigo-400/90 to-indigo-400/0 transition-opacity duration-500 group-hover:opacity-40" />
+                        </button>
                     </div>
                 </div>
             </div>
@@ -107,45 +110,56 @@ const HeroSection = () => {
                             sequential
                             useOriginalCharsOnly={false}
                             speed={70}
-                            className="font-mono text-white bg-black/40 border border-[#22C55E]/20 px-3 py-1.5 rounded-none uppercase text-xs tracking-wider font-semibold"
+                            className="font-mono text-[#22C55E] bg-[#22C55E]/10 border border-[#22C55E]/20 px-3 py-1.5 rounded-full uppercase text-xs tracking-wider font-semibold"
                         />
                     </div>
-                    <TextEffect preset="fade-in-blur" speedSegment={0.3} as="h1" className="text-balance text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl">
+                    <TextEffect preset="fade-in-blur" speedSegment={0.3} as="h1" className="text-balance text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl text-white drop-shadow-lg">
                         Earn Crypto by
                     </TextEffect>
-                    <TextEffect preset="fade-in-blur" speedSegment={0.3} as="h1" className="text-balance text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl bg-clip-text bg-gradient-to-r from-[#6366F1] to-[#22C55E] mt-2 pb-2">
-                        Solving Real Hustles
+                    <TextEffect preset="fade-in-blur" speedSegment={0.3} as="h1" className="text-balance text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl text-transparent bg-clip-text bg-gradient-to-r from-[#6366F1] to-[#22C55E] mt-2 pb-2 drop-shadow-lg">
+                        Solving Real Problems
                     </TextEffect>
-                    <TextEffect per="line" preset="fade-in-blur" speedSegment={0.3} delay={0.5} as="p" className="mt-8 max-w-lg text-pretty text-lg text-muted-foreground leading-relaxed">
+                    <TextEffect per="line" preset="fade-in-blur" speedSegment={0.3} delay={0.5} as="p" className="mt-8 max-w-lg text-pretty text-lg text-white/90 leading-relaxed drop-shadow-md">
                         Companies post bounties. Students solve them. AI evaluates submissions. Winners get paid automatically on Ethereum.
                     </TextEffect>
                     <AnimatedGroup variants={({ container: { visible: { transition: { staggerChildren: 0.05, delayChildren: 0.75 } } }, ...(transitionVariants as any) })} className="mt-10 flex flex-col sm:flex-row gap-4 lg:justify-start">
-                      <a
-                href="/auth/login"
-              >
-                <GlowButton > 
-                            Start Solving
-                 </GlowButton>
-              </a>
-                        <a
-                href="/auth/login"
-              ></a>
-                        <GlowButton href="/dashboard">
-                            Post a Bounty
-                        </GlowButton>
+                        <button className="bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6 text-white inline-block">
+                            <span className="absolute inset-0 overflow-hidden rounded-full">
+                                <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(99,102,241,0.6)_0%,rgba(99,102,241,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                            </span>
+                            <Link href="/api/auth/login?returnTo=/dashboard" className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-6 ring-1 ring-white/10">
+                                <span>Start Solving</span>
+                                <svg fill="none" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10.75 8.75L14.25 12L10.75 15.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                                </svg>
+                            </Link>
+                            <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-indigo-400/0 via-indigo-400/90 to-indigo-400/0 transition-opacity duration-500 group-hover:opacity-40" />
+                        </button>
+                        <button className="bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6 text-white inline-block">
+                            <span className="absolute inset-0 overflow-hidden rounded-full">
+                                <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(34,197,94,0.6)_0%,rgba(34,197,94,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                            </span>
+                            <Link href="/dashboard" className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-6 ring-1 ring-white/10">
+                                <span>Post a Bounty</span>
+                                <svg fill="none" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10.75 8.75L14.25 12L10.75 15.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                                </svg>
+                            </Link>
+                            <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-green-400/0 via-green-400/90 to-green-400/0 transition-opacity duration-500 group-hover:opacity-40" />
+                        </button>
                     </AnimatedGroup>
-                    <p className="mt-6 text-xs text-muted-foreground/80 font-mono tracking-wide">
+                    <p className="mt-6 text-xs text-white/70 font-mono tracking-wide drop-shadow-md">
                         <Shield className="inline-block w-3 h-3 mr-1 -mt-0.5" />
                         Secure payouts powered by Ethereum Sepolia smart contracts
                     </p>
                 </div>
 
                 {/* Hero Right Box (Live Bounties) */}
-                {/* <div className="relative w-full max-w-md mx-auto lg:ml-auto lg:mr-0">
+                <div className="relative w-full max-w-md mx-auto lg:ml-auto lg:mr-0">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/20 to-[#22C55E]/10 rounded-[2rem] blur-xl opacity-50" />
                     <div className="relative border border-white/10 rounded-[2rem] bg-[#0A0A0A]/80 backdrop-blur-2xl p-6 md:p-8 shadow-2xl">
                         <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
-                            <h3 className="font-semibold text-xl tracking-tight flex items-center gap-2">
+                            <h3 className="font-semibold text-xl tracking-tight flex items-center gap-2 text-white">
                                 <span className="relative flex h-3 w-3">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75"></span>
                                     <span className="relative inline-flex rounded-full h-3 w-3 bg-[#22C55E]"></span>
@@ -162,28 +176,16 @@ const HeroSection = () => {
                             ].map((job, idx) => (
                                 <div key={idx} className="group p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] hover:border-white/10 transition-all cursor-pointer">
                                     <div className="flex justify-between items-start mb-2">
-                                        <h4 className="font-medium text-sm text-foreground group-hover:text-[#6366F1] transition-colors">{job.title}</h4>
+                                        <h4 className="font-medium text-sm text-white group-hover:text-[#6366F1] transition-colors">{job.title}</h4>
                                         <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#22C55E]/10 text-[#22C55E]">Open</span>
                                     </div>
-                                    <p className="text-xs text-muted-foreground leading-snug mb-3 line-clamp-2">{job.desc}</p>
+                                    <p className="text-xs text-white/60 leading-snug mb-3 line-clamp-2">{job.desc}</p>
                                     <div className="flex items-center justify-between mt-auto">
-                                        <span className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground">Reward</span>
+                                        <span className="text-[10px] uppercase font-mono tracking-wider text-white/50">Reward</span>
                                         <span className={`font-mono font-semibold text-xs ${job.color}`}>{job.reward}</span>
                                     </div>
                                 </div>
                             ))}
-                        </div>
-                    </div>
-                </div> */}
-                <div>
-                    <div className="relative w-full max-w-2xl mx-auto lg:ml-auto lg:mr-0">
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/20 to-[#22C55E]/10 rounded-none blur-xl opacity-50" />
-                        <div className="relative rounded-none w-96 h-96 mx-auto border-2 border-white/10 bg-[#0A0A0A]/80 backdrop-blur-2xl p-8 shadow-2xl overflow-hidden flex items-center justify-center">
-                            <img
-                                src="/hero.gif"
-                                alt="ClaimR Platform Demo"
-                                className="w-80 h-80 rounded-none object-cover"
-                            />
                         </div>
                     </div>
                 </div>
@@ -195,7 +197,7 @@ const HeroSection = () => {
 const CardDecorator = ({ children }: { children: ReactNode }) => (
     <div className="mask-radial-from-40% mask-radial-to-60% relative mx-auto size-24 duration-200 [--color-border:color-mix(in_oklab,var(--color-white)10%,transparent)] group-hover:[--color-border:color-mix(in_oklab,var(--color-white)20%,transparent)]">
         <div aria-hidden className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] bg-size-[16px_16px] opacity-20" />
-        <div className="bg-background absolute inset-0 m-auto flex size-12 items-center justify-center border border-white/10 rounded-none">{children}</div>
+        <div className="bg-background absolute inset-0 m-auto flex size-12 items-center justify-center border border-white/10 rounded-xl">{children}</div>
     </div>
 );
 
@@ -204,7 +206,7 @@ const HowItWorksSection = () => (
         <div className="mx-auto max-w-7xl px-6">
             <div className="text-center mb-16">
                 <TextEffect triggerOnView preset="fade-in-blur" speedSegment={0.3} as="h2" className="text-3xl font-bold tracking-tight md:text-5xl">
-                    How ClaimR Works
+                    How ProofOfWork Works
                 </TextEffect>
             </div>
             <AnimatedGroup triggerOnView variants={({ container: { visible: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } } }, ...(transitionVariants as any) })} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -214,10 +216,10 @@ const HowItWorksSection = () => (
                     { icon: <Bot className="text-orange-400" />, title: 'AI Evaluation', desc: 'AI automatically evaluates submissions and scores them fairly.' },
                     { icon: <Zap className="text-yellow-400" />, title: 'Automatic Payout', desc: 'Winning solutions get paid instantly through Ethereum smart contracts.' },
                 ].map((item, idx) => (
-                    <div key={idx} className="group p-8 rounded-none bg-black/50 border border-white/5 text-center hover:bg-white/[0.04] transition-colors relative overflow-hidden">
+                    <div key={idx} className="group p-8 rounded-[2rem] bg-[#0A0A0A]/60 backdrop-blur-xl border border-white/10 text-center hover:bg-white/[0.04] hover:shadow-2xl transition-all relative overflow-hidden shadow-lg">
                         <CardDecorator>{item.icon}</CardDecorator>
-                        <h3 className="mt-8 font-semibold text-lg">{item.title}</h3>
-                        <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                        <h3 className="mt-8 font-semibold text-lg text-white">{item.title}</h3>
+                        <p className="mt-3 text-sm text-[#E5E7EB]/80 leading-relaxed font-medium">{item.desc}</p>
                     </div>
                 ))}
             </AnimatedGroup>
@@ -230,7 +232,7 @@ const WhyProofOfWorkSection = () => (
         <div className="mx-auto max-w-7xl px-6">
             <div className="text-center mb-16">
                 <TextEffect triggerOnView preset="fade-in-blur" speedSegment={0.3} as="h2" className="text-3xl font-bold tracking-tight md:text-5xl">
-                    Why ClaimR
+                    Why ProofOfWork
                 </TextEffect>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -239,8 +241,8 @@ const WhyProofOfWorkSection = () => (
                     { icon: <MessageSquare className="w-8 h-8 text-[#22C55E]" />, title: 'AI Feedback', desc: 'Every submission gets feedback so you can improve and win future bounties.' },
                     { icon: <Briefcase className="w-8 h-8 text-orange-400" />, title: 'Skill-Based Hiring', desc: 'Companies discover talent through real work instead of resumes.' }
                 ].map((item, idx) => (
-                    <div key={idx} className="p-10 rounded-none bg-background border border-white/5 shadow-2xl">
-                        <div className="w-16 h-16 rounded-none bg-white/[0.03] border border-white/10 flex items-center justify-center mb-8">
+                    <div key={idx} className="p-10 rounded-[2.5rem] bg-background border border-white/5 shadow-2xl">
+                        <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center mb-8">
                             {item.icon}
                         </div>
                         <h3 className="text-xl font-semibold mb-4">{item.title}</h3>
@@ -260,15 +262,22 @@ const FeaturedBountiesSection = () => (
                     <h2 className="text-3xl font-bold tracking-tight md:text-5xl">Featured Bounties</h2>
                     <p className="mt-4 text-muted-foreground text-lg">Pick up a side quest today.</p>
                 </div>
-                <GlowButton href="/dashboard">
-                    View All Bounties
-                </GlowButton>
+                <button className="bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6 text-white inline-block">
+                    <span className="absolute inset-0 overflow-hidden rounded-full">
+                        <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(99,102,241,0.6)_0%,rgba(99,102,241,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                    </span>
+                    <Link href="/dashboard" className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-6 ring-1 ring-white/10">
+                        <span>View All Bounties</span>
+                        <ArrowRight className="w-4 h-4" />
+                    </Link>
+                    <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-indigo-400/0 via-indigo-400/90 to-indigo-400/0 transition-opacity duration-500 group-hover:opacity-40" />
+                </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="flex flex-col p-8 rounded-none bg-white/[0.02] border border-white/5 hover:border-[#6366F1]/30 transition-all group">
+                <div className="flex flex-col p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-[#6366F1]/30 transition-all group">
                     <div className="flex items-center justify-between mb-6">
-                        <div className="w-12 h-12 rounded-none bg-[#6366F1]/10 flex items-center justify-center border border-[#6366F1]/20">
+                        <div className="w-12 h-12 rounded-xl bg-[#6366F1]/10 flex items-center justify-center border border-[#6366F1]/20">
                             <Code className="w-6 h-6 text-[#6366F1]" />
                         </div>
                     </div>
@@ -283,9 +292,18 @@ const FeaturedBountiesSection = () => (
                             <span className="text-xs text-muted-foreground uppercase font-mono">Difficulty</span>
                             <span className="text-xs font-semibold px-2 py-1 rounded-md bg-white/5">Intermediate</span>
                         </div>
-                        <GlowButton href="/dashboard" className="w-full mt-4">
-                            View Bounty
-                        </GlowButton>
+                        <button className="w-full bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6 text-white inline-block">
+                            <span className="absolute inset-0 overflow-hidden rounded-full">
+                                <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(99,102,241,0.6)_0%,rgba(99,102,241,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                            </span>
+                            <div className="relative flex space-x-2 items-center justify-center z-10 rounded-full bg-zinc-950 py-0.5 px-4 ring-1 ring-white/10 w-full">
+                                <span>View Bounty</span>
+                                <svg fill="none" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10.75 8.75L14.25 12L10.75 15.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                                </svg>
+                            </div>
+                            <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-indigo-400/0 via-indigo-400/90 to-indigo-400/0 transition-opacity duration-500 group-hover:opacity-40" />
+                        </button>
                     </div>
                 </div>
                 {/* Placeholder for design match, prompt said 'Card Top...' */}
@@ -306,9 +324,18 @@ const FeaturedBountiesSection = () => (
                             <span className="text-xs text-muted-foreground uppercase font-mono">Difficulty</span>
                             <span className="text-xs font-semibold px-2 py-1 rounded-md bg-white/5">Advanced</span>
                         </div>
-                        <GlowButton href="/dashboard" className="w-full mt-4">
-                            View Bounty
-                        </GlowButton>
+                        <button className="w-full bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6 text-white inline-block">
+                            <span className="absolute inset-0 overflow-hidden rounded-full">
+                                <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(99,102,241,0.6)_0%,rgba(99,102,241,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                            </span>
+                            <div className="relative flex space-x-2 items-center justify-center z-10 rounded-full bg-zinc-950 py-0.5 px-4 ring-1 ring-white/10 w-full">
+                                <span>View Bounty</span>
+                                <svg fill="none" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10.75 8.75L14.25 12L10.75 15.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                                </svg>
+                            </div>
+                            <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-indigo-400/0 via-indigo-400/90 to-indigo-400/0 transition-opacity duration-500 group-hover:opacity-40" />
+                        </button>
                     </div>
                 </div>
                 {/* Placeholder */}
@@ -329,9 +356,18 @@ const FeaturedBountiesSection = () => (
                             <span className="text-xs text-muted-foreground uppercase font-mono">Difficulty</span>
                             <span className="text-xs font-semibold px-2 py-1 rounded-md bg-white/5">Advanced</span>
                         </div>
-                        <GlowButton href="/dashboard" className="w-full mt-4">
-                            View Bounty
-                        </GlowButton>
+                        <button className="w-full bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6 text-white inline-block">
+                            <span className="absolute inset-0 overflow-hidden rounded-full">
+                                <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(99,102,241,0.6)_0%,rgba(99,102,241,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                            </span>
+                            <div className="relative flex space-x-2 items-center justify-center z-10 rounded-full bg-zinc-950 py-0.5 px-4 ring-1 ring-white/10 w-full">
+                                <span>View Bounty</span>
+                                <svg fill="none" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10.75 8.75L14.25 12L10.75 15.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                                </svg>
+                            </div>
+                            <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-indigo-400/0 via-indigo-400/90 to-indigo-400/0 transition-opacity duration-500 group-hover:opacity-40" />
+                        </button>
                     </div>
                 </div>
             </div>
@@ -347,7 +383,7 @@ const LeaderboardSection = () => (
                     Top Solvers
                 </TextEffect>
             </div>
-            <div className="max-w-4xl mx-auto border border-white/10 rounded-none bg-white/[0.01] p-2 overflow-hidden shadow-2xl">
+            <div className="max-w-4xl mx-auto border border-white/10 rounded-[2rem] bg-white/[0.01] p-2 overflow-hidden shadow-2xl">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
@@ -399,7 +435,7 @@ const DashboardBoxesPreview = () => (
                     { title: "Your Submissions", value: "12", icon: <Upload className="w-5 h-5 opacity-50" /> },
                     { title: "Bounties Won", value: "3", icon: <Zap className="w-5 h-5 opacity-50 text-yellow-500" /> },
                 ].map((box, i) => (
-                    <div key={i} className="p-6 rounded-none bg-background border border-border">
+                    <div key={i} className="p-6 rounded-3xl bg-background border border-border">
                         <div className="flex justify-between items-start mb-4">
                             <span className="text-sm font-medium text-muted-foreground">{box.title}</span>
                             {box.icon}
@@ -423,12 +459,30 @@ const CTASection = () => (
                 Join ProofOfWork and turn your skills into real crypto earnings.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <GlowButton href="/api/auth/login">
-                    Connect Wallet
-                </GlowButton>
-                <GlowButton href="/dashboard">
-                    Browse Bounties
-                </GlowButton>
+                <button className="bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6 text-white inline-block">
+                    <span className="absolute inset-0 overflow-hidden rounded-full">
+                        <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(99,102,241,0.6)_0%,rgba(99,102,241,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                    </span>
+                    <Link href="/api/auth/login?returnTo=/dashboard" className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-6 ring-1 ring-white/10">
+                        <span>Connect Wallet</span>
+                        <svg fill="none" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.75 8.75L14.25 12L10.75 15.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                        </svg>
+                    </Link>
+                    <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-indigo-400/0 via-indigo-400/90 to-indigo-400/0 transition-opacity duration-500 group-hover:opacity-40" />
+                </button>
+                <button className="bg-slate-800 no-underline group cursor-pointer relative shadow-2xl shadow-zinc-900 rounded-full p-px text-xs font-semibold leading-6 text-white inline-block">
+                    <span className="absolute inset-0 overflow-hidden rounded-full">
+                        <span className="absolute inset-0 rounded-full bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(34,197,94,0.6)_0%,rgba(34,197,94,0)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                    </span>
+                    <Link href="/dashboard" className="relative flex space-x-2 items-center z-10 rounded-full bg-zinc-950 py-0.5 px-6 ring-1 ring-white/10">
+                        <span>Browse Bounties</span>
+                        <svg fill="none" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10.75 8.75L14.25 12L10.75 15.25" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" />
+                        </svg>
+                    </Link>
+                    <span className="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-green-400/0 via-green-400/90 to-green-400/0 transition-opacity duration-500 group-hover:opacity-40" />
+                </button>
             </div>
         </div>
     </section>

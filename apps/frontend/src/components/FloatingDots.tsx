@@ -1,71 +1,97 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Dot = ({ id }: { id: number }) => {
-    const [initialConfig] = useState(() => ({
+    // Memoize config to prevent rerenders changing base values
+    const config = useMemo(() => ({
         x: Math.random() * 100,
         y: Math.random() * 100,
-        size: Math.random() * 3 + 1, // smaller dots for elegancy
-        duration: Math.random() * 20 + 20, // slower for beauty
-        delay: Math.random() * -20,
-        color: Math.random() > 0.5 ? '#22C55E' : '#10B981', // green vs emerald
-    }));
+        size: Math.random() * 2 + 1, // smaller and more elegant
+        duration: Math.random() * 30 + 30, // even slower and more hypnotic
+        delay: Math.random() * -40,
+        // Mix of brand colors: Indigo, Green, Emerald
+        color: ['#6366F1', '#22C55E', '#10B981'][Math.floor(Math.random() * 3)],
+        opacity: Math.random() * 0.3 + 0.1,
+    }), []);
 
     return (
         <motion.div
-            initial={{ opacity: 0, scale: 0 }}
+            initial={{ opacity: 0 }}
             animate={{
-                opacity: [0.1, 0.4, 0.1],
-                scale: [1, 1.2, 1],
+                opacity: [0, config.opacity, 0],
                 x: [
-                    `${initialConfig.x}%`,
-                    `${initialConfig.x + (Math.random() * 15 - 7.5)}%`,
-                    `${initialConfig.x}%`
+                    `${config.x}%`,
+                    `${config.x + (Math.random() * 10 - 5)}%`,
+                    `${config.x}%`
                 ],
                 y: [
-                    `${initialConfig.y}%`,
-                    `${initialConfig.y + (Math.random() * 15 - 7.5)}%`,
-                    `${initialConfig.y}%`
+                    `${config.y}%`,
+                    `${config.y + (Math.random() * 10 - 5)}%`,
+                    `${config.y}%`
                 ],
             }}
             transition={{
-                duration: initialConfig.duration,
+                duration: config.duration,
                 repeat: Infinity,
-                delay: initialConfig.delay,
-                ease: "easeInOut",
+                delay: config.delay,
+                ease: "linear", // smooth continuous movement
             }}
-            className="absolute rounded-full pointer-events-none"
+            className="absolute rounded-none pointer-events-none" // NO ROUNDED CORNERS applied here too for consistency
             style={{
-                width: initialConfig.size,
-                height: initialConfig.size,
+                width: config.size,
+                height: config.size,
                 left: 0,
                 top: 0,
-                backgroundColor: initialConfig.color,
-                boxShadow: `0 0 ${initialConfig.size * 3}px ${initialConfig.color}`,
-                filter: 'blur(0.5px)',
+                backgroundColor: config.color,
+                boxShadow: `0 0 ${config.size * 6}px ${config.color}`,
+                filter: 'blur(0.2px)',
             }}
         />
     );
 };
 
 export default function FloatingDots() {
-    const [dots, setDots] = useState<number[]>([]);
+    const [mounted, setMounted] = useState(false);
+    const dotCount = 80;
 
     useEffect(() => {
-        setDots(Array.from({ length: 50 }, (_, i) => i));
+        setMounted(true);
     }, []);
 
+    if (!mounted) return null;
+
     return (
-        <div className="fixed inset-0 pointer-events-none overflow-hidden z-50 bg-transparent">
+        <div
+            className="fixed inset-0 pointer-events-none overflow-hidden z-[9999]"
+            style={{
+                background: 'transparent',
+                // Subtle vignette to focus attention
+                boxShadow: 'inset 0 0 150px rgba(0,0,0,0.5)'
+            }}
+        >
             <AnimatePresence>
-                {dots.map((id) => (
-                    <Dot key={id} id={id} />
+                {Array.from({ length: dotCount }).map((_, i) => (
+                    <Dot key={i} id={i} />
                 ))}
             </AnimatePresence>
-            {/* Add a subtle radial gradient to the center to pull everything together */}
-            <div className="absolute inset-0 bg-radial-gradient from-transparent via-transparent to-black/20 pointer-events-none" />
+
+            {/* Ambient pulse layer */}
+            <motion.div
+                animate={{
+                    opacity: [0.03, 0.08, 0.03]
+                }}
+                transition={{
+                    duration: 10,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                }}
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: 'radial-gradient(circle at 50% 50%, rgba(34, 197, 94, 0.05) 0%, transparent 70%)'
+                }}
+            />
         </div>
     );
 }
