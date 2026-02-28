@@ -96,7 +96,7 @@ const HeroSection = () => {
                 </div>
 
                 {/* Hero Right Box (Live Bounties) */}
-                <div className="relative w-full max-w-md mx-auto lg:ml-auto lg:mr-0">
+                {/* <div className="relative w-full max-w-md mx-auto lg:ml-auto lg:mr-0">
                     <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/20 to-[#22C55E]/10 rounded-[2rem] blur-xl opacity-50" />
                     <div className="relative border border-white/10 rounded-[2rem] bg-[#0A0A0A]/80 backdrop-blur-2xl p-6 md:p-8 shadow-2xl">
                         <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
@@ -127,6 +127,18 @@ const HeroSection = () => {
                                     </div>
                                 </div>
                             ))}
+                        </div>
+                    </div>
+                </div> */}
+                <div>
+                    <div className="relative w-full max-w-2xl mx-auto lg:ml-auto lg:mr-0">
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/20 to-[#22C55E]/10 rounded-[3rem] blur-xl opacity-50" />
+                        <div className="relative rounded-[3rem] w-96 h-96 mx-auto border-2 border-white/10 bg-[#0A0A0A]/80 backdrop-blur-2xl p-8 shadow-2xl overflow-hidden flex items-center justify-center">
+                            <img
+                                src="/hero.gif"
+                                alt="ClaimR Platform Demo"
+                                className="w-80 h-80 rounded-[2.5rem] object-cover"
+                            />
                         </div>
                     </div>
                 </div>
