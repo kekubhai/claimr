@@ -44,9 +44,14 @@ const Navbar = () => {
                             <Link href="#leaderboard" className="hover:text-foreground font-bold transition-colors">Leaderboard</Link>
                             <Link href="#docs" className="hover:text-foreground font-bold transition-colors">Docs</Link>
                         </div>
-                        <GlowButton href="/api/auth/login?returnTo=/dashboard">
-                            Connect Wallet
+                        <a
+                href="/auth/login"
+              >
+                <GlowButton >
+                            Sign in
                         </GlowButton>
+              </a>
+                        
                     </div>
                 </div>
             </div>
@@ -82,9 +87,16 @@ const HeroSection = () => {
                         Companies post bounties. Students solve them. AI evaluates submissions. Winners get paid automatically on Ethereum.
                     </TextEffect>
                     <AnimatedGroup variants={({ container: { visible: { transition: { staggerChildren: 0.05, delayChildren: 0.75 } } }, ...(transitionVariants as any) })} className="mt-10 flex flex-col sm:flex-row gap-4 lg:justify-start">
-                        <GlowButton href="/api/auth/login?returnTo=/dashboard">
+                      <a
+                href="/auth/login"
+              >
+                <GlowButton > 
                             Start Solving
-                        </GlowButton>
+                 </GlowButton>
+              </a>
+                        <a
+                href="/auth/login"
+              ></a>
                         <GlowButton href="/dashboard">
                             Post a Bounty
                         </GlowButton>
@@ -378,7 +390,7 @@ const CTASection = () => (
                 Join ProofOfWork and turn your skills into real crypto earnings.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <GlowButton href="/api/auth/login?returnTo=/dashboard">
+                <GlowButton href="/api/auth/login">
                     Connect Wallet
                 </GlowButton>
                 <GlowButton href="/dashboard">
