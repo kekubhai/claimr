@@ -1,6 +1,7 @@
 import { auth0 } from "@/lib/auth0";
 import Typewriter from "@/components/Typewriter";
 import HeaderProfile from "@/components/HeaderProfile";
+import GlowButton from "@/components/ui/GlowButton";
 
 const projects = [
   {
@@ -95,7 +96,7 @@ export default async function Home() {
         {/* ── HERO ── */}
         <section className="py-24 md:py-32">
           <p className="mb-4 text-sm uppercase tracking-widest text-white/60">
-           elcome
+            elcome
           </p>
           <h1 className="text-5xl font-bold uppercase leading-tight md:text-7xl">
             <Typewriter text="CLAIMR" speed={120} />
@@ -106,18 +107,12 @@ export default async function Home() {
             On-chain settlement for real work.
           </p>
           <div className="mt-10 flex gap-4">
-            <a
-              href="/bounties"
-              className="border border-white px-6 py-3 text-sm uppercase tracking-wider cursor-pointer hover:bg-white hover:text-black transition-colors"
-            >
+            <GlowButton href="/bounties">
               View Bounties
-            </a>
-            <a
-              href="#contact"
-              className="border border-white px-6 py-3 text-sm uppercase tracking-wider cursor-pointer hover:bg-white hover:text-black transition-colors"
-            >
+            </GlowButton>
+            <GlowButton href="#contact">
               Contact Us
-            </a>
+            </GlowButton>
           </div>
         </section>
 
@@ -249,12 +244,9 @@ export default async function Home() {
                 className="w-full border border-white bg-transparent px-4 py-3 text-sm text-white placeholder:text-white/30 focus:bg-white focus:text-black transition-colors resize-none"
               />
             </div>
-            <button
-              type="submit"
-              className="border border-white px-8 py-3 text-sm uppercase tracking-wider cursor-pointer hover:bg-white hover:text-black transition-colors"
-            >
+            <GlowButton type="submit">
               Send Message
-            </button>
+            </GlowButton>
           </form>
         </section>
 
