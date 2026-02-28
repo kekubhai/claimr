@@ -15,7 +15,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 
 const Web3Logo = () => (
-    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-[#6366F1] to-[#22C55E]">
+    <div className="flex items-center justify-center w-8 h-8 rounded-none bg-gradient-to-br from-[#6366F1] to-[#22C55E]">
         <span className="text-white font-mono text-xs font-bold">PW</span>
     </div>
 );
@@ -70,7 +70,7 @@ const Navbar = () => {
                             <X className="in-data-[state=active]:rotate-0 in-data-[state=active]:scale-100 in-data-[state=active]:opacity-100 absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200" />
                         </button>
                     </div>
-                    <div className="bg-background in-data-[state=active]:block lg:in-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border border-white/10 p-6 shadow-2xl md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-8 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none">
+                    <div className="bg-background in-data-[state=active]:block lg:in-data-[state=active]:flex mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-none border border-white/10 p-6 shadow-2xl md:flex-nowrap lg:m-0 lg:flex lg:w-fit lg:gap-8 lg:space-y-0 lg:border-transparent lg:bg-transparent lg:p-0 lg:shadow-none">
                         <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-6 sm:space-y-0 md:w-fit font-medium text-sm text-muted-foreground">
                             <Link href="#how-it-works" className="hover:text-foreground font-bold transition-colors">How it Works</Link>
                             <Link href="#bounties" className="hover:text-foreground font-bold transition-colors">Bounties</Link>
@@ -107,7 +107,7 @@ const HeroSection = () => {
                             sequential
                             useOriginalCharsOnly={false}
                             speed={70}
-                            className="font-mono text-white bg-black/40 border border-[#22C55E]/20 px-3 py-1.5 rounded-full uppercase text-xs tracking-wider font-semibold"
+                            className="font-mono text-white bg-black/40 border border-[#22C55E]/20 px-3 py-1.5 rounded-none uppercase text-xs tracking-wider font-semibold"
                         />
                     </div>
                     <TextEffect preset="fade-in-blur" speedSegment={0.3} as="h1" className="text-balance text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl">
@@ -177,12 +177,12 @@ const HeroSection = () => {
                 </div> */}
                 <div>
                     <div className="relative w-full max-w-2xl mx-auto lg:ml-auto lg:mr-0">
-                        <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/20 to-[#22C55E]/10 rounded-[3rem] blur-xl opacity-50" />
-                        <div className="relative rounded-[3rem] w-96 h-96 mx-auto border-2 border-white/10 bg-[#0A0A0A]/80 backdrop-blur-2xl p-8 shadow-2xl overflow-hidden flex items-center justify-center">
+                        <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/20 to-[#22C55E]/10 rounded-none blur-xl opacity-50" />
+                        <div className="relative rounded-none w-96 h-96 mx-auto border-2 border-white/10 bg-[#0A0A0A]/80 backdrop-blur-2xl p-8 shadow-2xl overflow-hidden flex items-center justify-center">
                             <img
                                 src="/hero.gif"
                                 alt="ClaimR Platform Demo"
-                                className="w-80 h-80 rounded-[2.5rem] object-cover"
+                                className="w-80 h-80 rounded-none object-cover"
                             />
                         </div>
                     </div>
@@ -195,7 +195,7 @@ const HeroSection = () => {
 const CardDecorator = ({ children }: { children: ReactNode }) => (
     <div className="mask-radial-from-40% mask-radial-to-60% relative mx-auto size-24 duration-200 [--color-border:color-mix(in_oklab,var(--color-white)10%,transparent)] group-hover:[--color-border:color-mix(in_oklab,var(--color-white)20%,transparent)]">
         <div aria-hidden className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] bg-size-[16px_16px] opacity-20" />
-        <div className="bg-background absolute inset-0 m-auto flex size-12 items-center justify-center border border-white/10 rounded-xl">{children}</div>
+        <div className="bg-background absolute inset-0 m-auto flex size-12 items-center justify-center border border-white/10 rounded-none">{children}</div>
     </div>
 );
 
@@ -214,7 +214,7 @@ const HowItWorksSection = () => (
                     { icon: <Bot className="text-orange-400" />, title: 'AI Evaluation', desc: 'AI automatically evaluates submissions and scores them fairly.' },
                     { icon: <Zap className="text-yellow-400" />, title: 'Automatic Payout', desc: 'Winning solutions get paid instantly through Ethereum smart contracts.' },
                 ].map((item, idx) => (
-                    <div key={idx} className="group p-8 rounded-[2rem] bg-black/50 border border-white/5 text-center hover:bg-white/[0.04] transition-colors relative overflow-hidden">
+                    <div key={idx} className="group p-8 rounded-none bg-black/50 border border-white/5 text-center hover:bg-white/[0.04] transition-colors relative overflow-hidden">
                         <CardDecorator>{item.icon}</CardDecorator>
                         <h3 className="mt-8 font-semibold text-lg">{item.title}</h3>
                         <p className="mt-3 text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
@@ -239,8 +239,8 @@ const WhyProofOfWorkSection = () => (
                     { icon: <MessageSquare className="w-8 h-8 text-[#22C55E]" />, title: 'AI Feedback', desc: 'Every submission gets feedback so you can improve and win future bounties.' },
                     { icon: <Briefcase className="w-8 h-8 text-orange-400" />, title: 'Skill-Based Hiring', desc: 'Companies discover talent through real work instead of resumes.' }
                 ].map((item, idx) => (
-                    <div key={idx} className="p-10 rounded-[2.5rem] bg-background border border-white/5 shadow-2xl">
-                        <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center mb-8">
+                    <div key={idx} className="p-10 rounded-none bg-background border border-white/5 shadow-2xl">
+                        <div className="w-16 h-16 rounded-none bg-white/[0.03] border border-white/10 flex items-center justify-center mb-8">
                             {item.icon}
                         </div>
                         <h3 className="text-xl font-semibold mb-4">{item.title}</h3>
@@ -266,9 +266,9 @@ const FeaturedBountiesSection = () => (
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="flex flex-col p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-[#6366F1]/30 transition-all group">
+                <div className="flex flex-col p-8 rounded-none bg-white/[0.02] border border-white/5 hover:border-[#6366F1]/30 transition-all group">
                     <div className="flex items-center justify-between mb-6">
-                        <div className="w-12 h-12 rounded-xl bg-[#6366F1]/10 flex items-center justify-center border border-[#6366F1]/20">
+                        <div className="w-12 h-12 rounded-none bg-[#6366F1]/10 flex items-center justify-center border border-[#6366F1]/20">
                             <Code className="w-6 h-6 text-[#6366F1]" />
                         </div>
                     </div>
@@ -347,7 +347,7 @@ const LeaderboardSection = () => (
                     Top Solvers
                 </TextEffect>
             </div>
-            <div className="max-w-4xl mx-auto border border-white/10 rounded-[2rem] bg-white/[0.01] p-2 overflow-hidden shadow-2xl">
+            <div className="max-w-4xl mx-auto border border-white/10 rounded-none bg-white/[0.01] p-2 overflow-hidden shadow-2xl">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
@@ -399,7 +399,7 @@ const DashboardBoxesPreview = () => (
                     { title: "Your Submissions", value: "12", icon: <Upload className="w-5 h-5 opacity-50" /> },
                     { title: "Bounties Won", value: "3", icon: <Zap className="w-5 h-5 opacity-50 text-yellow-500" /> },
                 ].map((box, i) => (
-                    <div key={i} className="p-6 rounded-3xl bg-background border border-border">
+                    <div key={i} className="p-6 rounded-none bg-background border border-border">
                         <div className="flex justify-between items-start mb-4">
                             <span className="text-sm font-medium text-muted-foreground">{box.title}</span>
                             {box.icon}
