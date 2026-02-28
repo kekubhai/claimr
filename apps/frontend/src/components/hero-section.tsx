@@ -29,7 +29,7 @@ export default function HeroSection() {
                                     sequential
                                     useOriginalCharsOnly={false}
                                     speed={70}
-                                    className='font-bold text-black bg-[#0A0A0A] px-3 py-1.5 rounded-md uppercase text-sm border border-white/20 shadow-lg tracking-wider font-semibold z-10 relative inline-block'
+                                    className='font-bold text-black bg-[#0A0A0A] px-3 py-1.5 rounded-none uppercase text-sm border border-white/20 shadow-lg tracking-wider font-semibold z-10 relative inline-block'
                                 />
                             </div>
                             <TextEffect

@@ -58,7 +58,7 @@ export default function FloatingDots() {
     }, []);
 
     return (
-        <div className="fixed inset-0 pointer-events-none overflow-hidden z-0 bg-transparent">
+        <div className="fixed inset-0 pointer-events-none overflow-hidden z-50 bg-transparent">
             <AnimatePresence>
                 {dots.map((id) => (
                     <Dot key={id} id={id} />

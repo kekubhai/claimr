@@ -17,7 +17,7 @@ export default function BountyCard({ bounty }: Props) {
   const end = bounty.endDate instanceof Date ? bounty.endDate : new Date(bounty.endDate);
 
   return (
-    <div className="border border-[#1E1E2E] bg-[#0f0f14] p-6 rounded-md hover:shadow-[0_0_24px_rgba(34,197,94,0.06)] transition-shadow">
+    <div className="border border-[#1E1E2E] bg-[#0f0f14] p-6 rounded-none hover:shadow-[0_0_24px_rgba(34,197,94,0.06)] transition-shadow">
       <div className="flex items-start justify-between mb-3">
         <h3 className="text-lg font-bold text-white">{bounty.title}</h3>
         <div className="text-right">
