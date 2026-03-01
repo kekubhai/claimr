@@ -21,6 +21,19 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  webpack: (config) => {
+    config.ignoreWarnings = [
+      { module: /@wagmi\/connectors/ },
+      { message: /Can't resolve.*porto/ },
+      { message: /Can't resolve.*@react-native-async-storage/ },
+    ];
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      porto: false,
+      '@react-native-async-storage/async-storage': false,
+    };
+    return config;
+  },
 };
 
 export default nextConfig;

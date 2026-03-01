@@ -7,6 +7,8 @@ import Navbar from "@/components/Navbar";
 import Typewriter from "@/components/Typewriter";
 import CreateUserClient from "./CreateUserClient";
 import UpdateProfileModal from "@/components/UpdateProfileModal";
+import OnboardingChecklist from "@/components/OnboardingChecklist";
+import ProgressTracker from "@/components/ProgressTracker";
 import { useEffect, useState } from "react";
 
 export default function DashboardClient({ sessionUser }: { sessionUser: any }) {
@@ -104,9 +106,23 @@ export default function DashboardClient({ sessionUser }: { sessionUser: any }) {
               </h1>
               
               {/* Display GitHub and Wallet if they exist */}
-              <div className="space-y-1 text-xs uppercase tracking-widest text-white/50">
-                <p>GITHUB: {githubUsername ? `@${githubUsername}` : "NOT_LINKED"}</p>
-                <p>WALLET: {walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : "NOT_LINKED"}</p>
+              <div className="space-y-2 text-xs uppercase tracking-widest mt-4">
+                <div className="flex items-center gap-2">
+                  <span className={`${githubUsername ? 'text-[#22C55E]' : 'text-white/50'}`}>
+                    ✓ GITHUB:
+                  </span>
+                  <span className={`${githubUsername ? 'text-white font-semibold' : 'text-white/50'}`}>
+                    {githubUsername ? `@${githubUsername}` : "NOT_LINKED"}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className={`${walletAddress ? 'text-[#22C55E]' : 'text-white/50'}`}>
+                    ✓ WALLET:
+                  </span>
+                  <span className={`font-mono font-semibold ${walletAddress ? 'text-[#22C55E] bg-[#22C55E]/10 px-3 py-1 rounded border border-[#22C55E]/30' : 'text-white/50'}`}>
+                    {walletAddress ? `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}` : "NOT_LINKED"}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -137,6 +153,24 @@ export default function DashboardClient({ sessionUser }: { sessionUser: any }) {
               <span className="text-4xl font-bold text-[#22C55E]">ACTIVE</span>
             </div>
           </div>
+        </section>
+
+        {/* ── ONBOARDING CHECKLIST ── */}
+        <section className="pb-8">
+          <OnboardingChecklist
+            onEditProfile={() => setProfileModalOpen(true)}
+            hasGithub={!!githubUsername}
+            hasWallet={!!walletAddress}
+          />
+        </section>
+
+        {/* ── PROGRESS TRACKER ── */}
+        <section className="pb-8">
+          <ProgressTracker
+            solvedCount={bountiesSolved.length}
+            postedCount={bountiesGiven.length}
+            totalEarned={TotalTokens || 0}
+          />
         </section>
 
         <hr className="border-[#1E1E2E]" />
@@ -257,6 +291,31 @@ export function SetterBountyCard({ bountyId, fallback }: { bountyId: Id<"bounty"
       </div>
 
       <div className="pt-2">
+        {/* ── Poster Analytics ── */}
+        {solutions.length > 0 && (
+          <div className="border border-[#1E1E2E] bg-[#0A0A0F] p-4 mb-4">
+            <p className="text-[10px] uppercase tracking-widest text-white/40 mb-3">// Poster Analytics</p>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="text-center">
+                <span className="block text-xl font-bold text-white tabular-nums">{solutions.length}</span>
+                <span className="text-[10px] text-white/30 uppercase tracking-widest">Submissions</span>
+              </div>
+              <div className="text-center">
+                <span className="block text-xl font-bold text-[#22C55E] tabular-nums">
+                  {solutions.length > 0 ? Math.round(solutions.reduce((a: number, s: any) => a + (s.score || 0), 0) / solutions.length) : 0}
+                </span>
+                <span className="text-[10px] text-white/30 uppercase tracking-widest">Avg Score</span>
+              </div>
+              <div className="text-center">
+                <span className="block text-xl font-bold text-white tabular-nums">
+                  {solutions.length > 0 ? Math.max(...solutions.map((s: any) => s.score || 0)) : 0}
+                </span>
+                <span className="text-[10px] text-white/30 uppercase tracking-widest">Top Score</span>
+              </div>
+            </div>
+          </div>
+        )}
+
         <p className="text-xs uppercase tracking-widest text-white/40 mb-4">
           // Submitted Proofs ({solutions.length})
         </p>

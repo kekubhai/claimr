@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
+import ConnectWalletButton from "./ConnectWalletButton";
+import { useAccount } from "wagmi";
 
 type Props = {
   email: string;
@@ -24,21 +26,24 @@ export default function UpdateProfileModal({
   const isOpen = isControlled ? controlledOpen : isOpenLocal;
 
   const [github, setGithub] = useState(initialGithub || "");
-  const [wallet, setWallet] = useState(initialWallet || "");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Read wallet address directly from wagmi — single source of truth
+  const { address: wagmiAddress } = useAccount();
+  const walletAddress = wagmiAddress || initialWallet || "";
 
   const updateUserInfo = useMutation(api.userFunctions.updateUserInfo);
 
-  const open = () => {
-    if (!isControlled) setIsOpenLocal(true);
-  };
-
-  const close = () => {
-    if (isControlled) {
-      onClose && onClose();
-    } else {
-      setIsOpenLocal(false);
+  useEffect(() => {
+    if (!isOpen) {
+      setGithub(initialGithub || "");
     }
+  }, [isOpen, initialGithub]);
+
+  const open = () => { if (!isControlled) setIsOpenLocal(true); };
+  const close = () => {
+    if (isControlled) { onClose?.(); }
+    else { setIsOpenLocal(false); }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -48,7 +53,7 @@ export default function UpdateProfileModal({
       await updateUserInfo({
         email,
         githubUsername: github,
-        WalletAddress: wallet,
+        WalletAddress: walletAddress,
       });
       close();
     } catch (error) {
@@ -59,7 +64,6 @@ export default function UpdateProfileModal({
     }
   };
 
-  // If closed and uncontrolled, render a button so callers can render the opener easily
   if (!isOpen) {
     return (
       <>
@@ -88,6 +92,14 @@ export default function UpdateProfileModal({
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Email — read only, for confirmation */}
+          <div>
+            <label className="mb-2 block text-xs uppercase tracking-wider text-white/70">Email</label>
+            <div className="border border-[#1E1E2E] px-4 py-3 text-sm text-white/40">
+              {email}
+            </div>
+          </div>
+
           <div>
             <label className="mb-2 block text-xs uppercase tracking-wider text-white/70">GitHub Username</label>
             <div className="flex items-center border border-[#1E1E2E] bg-transparent focus-within:border-[#22C55E] transition-colors">
@@ -103,21 +115,31 @@ export default function UpdateProfileModal({
           </div>
 
           <div>
-            <label className="mb-2 block text-xs uppercase tracking-wider text-white/70">Wallet Address (EVM / Solana)</label>
-            <input
-              type="text"
-              value={wallet}
-              onChange={(e) => setWallet(e.target.value)}
-              className="w-full border border-[#1E1E2E] bg-transparent px-4 py-3 text-sm text-white focus:border-[#22C55E] focus:outline-none transition-colors"
-              placeholder="0x..."
+            <label className="mb-2 block text-xs uppercase tracking-wider text-white/70">Wallet</label>
+            <ConnectWalletButton
+              className="w-full border border-[#22C55E] text-[#22C55E] px-4 py-3 text-xs uppercase tracking-wider hover:bg-[#22C55E] hover:text-black transition-colors"
             />
+            {/* Show the address that will actually be saved */}
+            {walletAddress && (
+              <p className="mt-2 text-xs text-white/40 font-mono">
+                Will save: {walletAddress.slice(0, 10)}...{walletAddress.slice(-6)}
+              </p>
+            )}
           </div>
 
           <div className="pt-4 flex gap-3">
-            <button type="button" onClick={close} className="flex-1 border border-[#1E1E2E] px-4 py-3 text-xs uppercase tracking-wider text-white/60 hover:border-white hover:text-white transition-colors">
+            <button
+              type="button"
+              onClick={close}
+              className="flex-1 border border-[#1E1E2E] px-4 py-3 text-xs uppercase tracking-wider text-white/60 hover:border-white hover:text-white transition-colors"
+            >
               Cancel
             </button>
-            <button type="submit" disabled={isSubmitting} className="flex-1 border border-[#22C55E] bg-[#22C55E]/10 px-4 py-3 text-xs text-[#22C55E] uppercase tracking-wider hover:bg-[#22C55E] hover:text-black transition-colors disabled:opacity-50">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex-1 border border-[#22C55E] bg-[#22C55E]/10 px-4 py-3 text-xs text-[#22C55E] uppercase tracking-wider hover:bg-[#22C55E] hover:text-black transition-colors disabled:opacity-50"
+            >
               {isSubmitting ? "Updating..." : "Save Identity"}
             </button>
           </div>

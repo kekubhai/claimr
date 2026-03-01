@@ -5,6 +5,7 @@ import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import SubmitSolutionModal from "./SubmitSolutionModal";
+import BountyQA from "./BountyQA";
 
 // ── Local mock & hardcoded bounty data for non-Convex IDs ──
 const LOCAL_BOUNTIES: Record<string, {
@@ -240,6 +241,9 @@ export default function BountyDetailsClient({
   />
         </div>
       </div>
+
+      {/* Q&A Section */}
+      <BountyQA />
     </div>
   );
 }

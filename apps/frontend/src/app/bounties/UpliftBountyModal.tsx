@@ -15,6 +15,18 @@ const verdictColor: Record<string, string> = {
   POOR: "#EF4444",
 };
 
+// ── Bounty Templates ──
+const TEMPLATES = [
+  { emoji: "🔗", label: "Smart Contract", title: "Smart Contract Development", description: "Develop and deploy a smart contract with full test coverage, gas optimization, and security best practices. Include deployment scripts and documentation.", amount: "500", unit: "USDC" },
+  { emoji: "🖥️", label: "Frontend", title: "Frontend Component / Page", description: "Build a responsive, accessible frontend component or page with modern UI/UX patterns, animations, and cross-browser compatibility.", amount: "300", unit: "USDC" },
+  { emoji: "⚙️", label: "Backend API", title: "REST/GraphQL API Development", description: "Design and implement a production-ready API with authentication, validation, error handling, rate limiting, and comprehensive Swagger/GraphQL docs.", amount: "400", unit: "USDC" },
+  { emoji: "🤖", label: "AI/ML", title: "AI/ML Model or Pipeline", description: "Build an AI/ML pipeline including data preprocessing, model training/fine-tuning, evaluation metrics, and a REST API endpoint for inference.", amount: "800", unit: "USDC" },
+  { emoji: "🔍", label: "Security Audit", title: "Security Audit & Report", description: "Perform a comprehensive security audit covering common vulnerabilities, edge cases, and attack vectors. Deliver a detailed report with severity ratings and remediation steps.", amount: "1200", unit: "USDC" },
+  { emoji: "📝", label: "Documentation", title: "Technical Documentation", description: "Write comprehensive technical documentation including API reference, getting started guide, architecture overview, and code examples.", amount: "200", unit: "USDC" },
+  { emoji: "🧪", label: "Testing", title: "Test Suite Implementation", description: "Implement a comprehensive test suite with unit tests, integration tests, and E2E tests. Target 90%+ coverage with CI/CD pipeline integration.", amount: "350", unit: "USDC" },
+  { emoji: "🎨", label: "UI/UX Design", title: "UI/UX Design System", description: "Design a complete UI kit or design system in Figma with components, tokens, typography, color system, and interactive prototypes.", amount: "600", unit: "USDC" },
+];
+
 export default function UpliftBountyModal({ email }: { email: string }) {
   const [isOpen, setIsOpen] = useState(false);
   const [step, setStep] = useState<Step>("form");
@@ -25,7 +37,8 @@ export default function UpliftBountyModal({ email }: { email: string }) {
     unit: "USDC",
     endDate: "",
   });
-  
+  const [showTemplates, setShowTemplates] = useState(true);
+
   // 2. FIXED: Typed the state as BountyAnalysis so TS knows about score, verdict, and remarks
   const [analysis, setAnalysis] = useState<any | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
@@ -132,6 +145,44 @@ export default function UpliftBountyModal({ email }: { email: string }) {
             {/* ── Step: Form ── */}
             {step === "form" && (
               <form className="space-y-4 px-8 py-6">
+                {/* ── Template Picker ── */}
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowTemplates(!showTemplates)}
+                    className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#22C55E] hover:text-[#22C55E]/80 transition-colors"
+                  >
+                    <span>{showTemplates ? "▼" : "▶"}</span>
+                    <span>Quick Templates</span>
+                  </button>
+                  {showTemplates && (
+                    <div className="grid grid-cols-2 gap-2">
+                      {TEMPLATES.map((t) => (
+                        <button
+                          key={t.label}
+                          type="button"
+                          onClick={() => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              title: t.title,
+                              description: t.description,
+                              amount: t.amount,
+                              unit: t.unit,
+                            }));
+                            setShowTemplates(false);
+                          }}
+                          className="border border-[#1E1E2E] bg-black px-3 py-2 text-left hover:border-[#22C55E]/50 transition-colors group"
+                        >
+                          <span className="text-sm mr-1">{t.emoji}</span>
+                          <span className="text-[10px] uppercase tracking-widest text-white/60 group-hover:text-[#22C55E]">
+                            {t.label}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 <div>
                   <label className="mb-2 block text-xs uppercase tracking-wider text-white/70">
                     Title
