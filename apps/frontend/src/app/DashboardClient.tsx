@@ -90,6 +90,12 @@ export default function DashboardClient({ sessionUser }: { sessionUser: any }) {
             <a href="/bounties" className="text-sm uppercase tracking-wider cursor-pointer hover:text-white/70 transition-colors">
               Bounties
             </a>
+            <a href="/leaderboard" className="text-sm uppercase tracking-wider cursor-pointer hover:text-white/70 transition-colors">
+              Leaderboard
+            </a>
+            <a href="/pricing" className="text-sm uppercase tracking-wider cursor-pointer hover:text-white/70 transition-colors">
+              Pricing
+            </a>
             {githubUsername ? (
               <a href={`/projects?gh=${githubUsername}`} className="text-sm uppercase tracking-wider cursor-pointer hover:text-white/70 transition-colors">
                 Projects

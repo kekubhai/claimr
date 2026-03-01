@@ -13,13 +13,8 @@ import {
 } from "lucide-react";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-
-const Web3Logo = () => (
-    <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-[#6366F1] to-[#22C55E]">
-        <span className="text-white font-mono text-xs font-bold">PW</span>
-    </div>
-);
-
+import { InfiniteLogoChain } from "@/components/ui/infinite-logo-chain";
+import { FloatingDots } from "@/components/ui/floating-dots";
 
 const GlowButton = ({
     href,
@@ -59,7 +54,7 @@ const Navbar = () => {
                 <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
                     <div className="flex w-full items-center justify-between gap-12 lg:w-auto">
                         <Link href="/" className="flex items-center space-x-3">
-                            <Web3Logo />
+                            <img src="/logo.png" alt="ClaimR Logo" className="w-8 h-8" />
                             <span className="font-mono text-lg font-bold text-foreground">ClaimR</span>
                         </Link>
                         <button
@@ -140,41 +135,7 @@ const HeroSection = () => {
                     </p>
                 </div>
 
-                {/* Hero Right Box (Live Bounties) */}
-                {/* <div className="relative w-full max-w-md mx-auto lg:ml-auto lg:mr-0">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/20 to-[#22C55E]/10 rounded-[2rem] blur-xl opacity-50" />
-                    <div className="relative border border-white/10 rounded-[2rem] bg-[#0A0A0A]/80 backdrop-blur-2xl p-6 md:p-8 shadow-2xl">
-                        <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
-                            <h3 className="font-semibold text-xl tracking-tight flex items-center gap-2">
-                                <span className="relative flex h-3 w-3">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#22C55E]"></span>
-                                </span>
-                                Live Bounties
-                            </h3>
-                        </div>
-
-                        <div className="space-y-4">
-                            {[
-                                { title: 'Python Web Scraper', desc: 'Scrape product prices from Amazon and export to CSV.', reward: '0.02 ETH', color: 'text-blue-400', bg: 'bg-blue-400/10' },
-                                { title: 'Landing Page Design', desc: 'Design a clean landing page for a fintech startup.', reward: '75 USDC', color: 'text-pink-400', bg: 'bg-pink-400/10' },
-                                { title: 'ML Classification Task', desc: 'Train a classification model with 90%+ accuracy.', reward: '0.05 ETH', color: 'text-purple-400', bg: 'bg-purple-400/10' },
-                            ].map((job, idx) => (
-                                <div key={idx} className="group p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] hover:border-white/10 transition-all cursor-pointer">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h4 className="font-medium text-sm text-foreground group-hover:text-[#6366F1] transition-colors">{job.title}</h4>
-                                        <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#22C55E]/10 text-[#22C55E]">Open</span>
-                                    </div>
-                                    <p className="text-xs text-muted-foreground leading-snug mb-3 line-clamp-2">{job.desc}</p>
-                                    <div className="flex items-center justify-between mt-auto">
-                                        <span className="text-[10px] uppercase font-mono tracking-wider text-muted-foreground">Reward</span>
-                                        <span className={`font-mono font-semibold text-xs ${job.color}`}>{job.reward}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div> */}
+             
                 <div>
                     <div className="relative w-full max-w-2xl mx-auto lg:ml-auto lg:mr-0">
                         <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/20 to-[#22C55E]/10 rounded-[3rem] blur-xl opacity-50" />
@@ -207,6 +168,7 @@ const HowItWorksSection = () => (
                     How ClaimR Works
                 </TextEffect>
             </div>
+            
             <AnimatedGroup triggerOnView variants={({ container: { visible: { transition: { staggerChildren: 0.1, delayChildren: 0.2 } } }, ...(transitionVariants as any) })} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
                     { icon: <Wallet className="text-[#6366F1]" />, title: 'Post a Bounty', desc: 'Companies and developers post tasks and lock crypto rewards in smart contracts.' },
@@ -222,17 +184,22 @@ const HowItWorksSection = () => (
                 ))}
             </AnimatedGroup>
         </div>
+        {/* Infinite Logo Chain */}
+            <div className="mb-1">
+                <InfiniteLogoChain />
+            </div>
     </section>
 );
 
 const WhyProofOfWorkSection = () => (
     <section className="py-24 sm:py-32 border-b border-white/5 bg-foreground/[0.01]">
         <div className="mx-auto max-w-7xl px-6">
-            <div className="text-center mb-16">
+            <div className="text-center mb-6">
                 <TextEffect triggerOnView preset="fade-in-blur" speedSegment={0.3} as="h2" className="text-3xl font-bold tracking-tight md:text-5xl">
                     Why ClaimR
                 </TextEffect>
             </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {[
                     { icon: <Shield className="w-8 h-8 text-[#6366F1]" />, title: 'Trustless Payments', desc: 'Rewards are locked in smart contracts before work begins. No ghosting. Guaranteed payouts.' },
@@ -490,9 +457,9 @@ const Footer = () => (
     <footer className="border-t border-white/5 bg-background">
         <div className="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-4">
-                <Web3Logo />
+                <img src="/logo.png" alt="ClaimR Logo" className="w-10 h-10" />
                 <div>
-                    <span className="font-bold text-foreground block">ProofOfWork</span>
+                    <span className="font-bold text-foreground block">ClaimR</span>
                     <span className="text-xs text-muted-foreground">Earn crypto by solving real problems.</span>
                 </div>
             </div>
@@ -528,6 +495,9 @@ export default function LandingPage() {
                     waveSpeed={0.05}
                 />
             </div>
+
+            {/* Floating Dots */}
+            <FloatingDots />
 
             <Navbar />
 

@@ -1,11 +1,22 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 const CATEGORIES = ["All", "Web3", "Frontend", "Backend", "AI / ML", "Design", "Writing"];
 const DIFFICULTIES = ["All Levels", "Beginner", "Intermediate", "Advanced", "Expert"];
 
-export default function BountyFilters({ bounties }: { bounties: any[] }) {
+type HardcodedBounty = {
+  id: string;
+  title: string;
+  company: string;
+  category: string;
+  difficulty: string;
+  reward: string;
+  tags: string[];
+};
+
+export default function BountyFilters({ bounties }: { bounties: HardcodedBounty[] }) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [activeDifficulty, setActiveDifficulty] = useState("All Levels");
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,7 +35,7 @@ export default function BountyFilters({ bounties }: { bounties: any[] }) {
     <>
       <div className="space-y-6 mb-8 border-b border-[#1E1E2E] pb-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-          <h2 className="text-xl font-bold uppercase tracking-widest text-white/80">Available Targets</h2>
+          <h2 className="text-xl font-bold uppercase tracking-widest text-white/80">// Community Bounty Board</h2>
           
           <div className="flex gap-2">
             <input 
@@ -119,9 +130,12 @@ export default function BountyFilters({ bounties }: { bounties: any[] }) {
                   <p className="text-[10px] text-white/40 uppercase tracking-widest mb-1">Reward</p>
                   <p className="text-lg font-bold text-[#22C55E]">{bounty.reward}</p>
                 </div>
-                <button className="border border-[#1E1E2E] px-6 py-2 text-xs text-white uppercase tracking-widest hover:border-[#22C55E] hover:text-[#22C55E] transition-colors whitespace-nowrap">
+                <Link 
+                  href={`/bounties/${bounty.id}`}
+                  className="border border-[#1E1E2E] px-6 py-2 text-xs text-white uppercase tracking-widest hover:border-[#22C55E] hover:text-[#22C55E] transition-colors whitespace-nowrap"
+                >
                   View &gt;
-                </button>
+                </Link>
               </div>
             </div>
           ))
