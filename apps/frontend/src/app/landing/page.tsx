@@ -228,6 +228,58 @@ const WhyProofOfWorkSection = () => (
     </section>
 );
 
+const SleepyYama = () => (
+    <section className="py-24 sm:py-32 border-b border-white/5">
+        <div className="mx-auto max-w-7xl px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                {/* Left Content */}
+                <div className="max-w-xl">
+                    <TextEffect preset="fade-in-blur" speedSegment={0.3} as="h2" className="text-4xl font-bold tracking-tight md:text-5xl mb-6">
+                        Meet Your AI Evaluator
+                    </TextEffect>
+                    <TextEffect per="line" preset="fade-in-blur" speedSegment={0.3} delay={0.3} as="p" className="text-lg text-muted-foreground leading-relaxed mb-8">
+                        Sleepy Yama is our intelligent AI system that fairly evaluates every submission. No bias. No delays. Just pure skill-based assessment powered by machine learning.
+                    </TextEffect>
+                    <AnimatedGroup variants={({ container: { visible: { transition: { staggerChildren: 0.1, delayChildren: 0.6 } } }, ...(transitionVariants as any) })} className="space-y-4">
+                        {[
+                            { icon: <BrainCircuit className="w-5 h-5 text-[#6366F1]" />, text: "Smart evaluation with deep learning" },
+                            { icon: <Shield className="w-5 h-5 text-[#22C55E]" />, text: "100% transparent scoring criteria" },
+                            { icon: <Zap className="w-5 h-5 text-yellow-400" />, text: "Instant feedback on submissions" },
+                        ].map((item, idx) => (
+                            <div key={idx} className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all">
+                                {item.icon}
+                                <span className="text-sm text-foreground">{item.text}</span>
+                            </div>
+                        ))}
+                    </AnimatedGroup>
+                </div>
+
+                {/* Right Image with Animation */}
+                <div className="relative flex justify-center">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#6366F1]/30 to-[#22C55E]/20 rounded-3xl blur-2xl opacity-60 animate-pulse" />
+                    <div className="relative border-2 border-white/10 rounded-3xl overflow-hidden shadow-2xl hover:border-[#6366F1]/50 transition-all duration-500 hover:shadow-[0_0_40px_rgba(99,102,241,0.2)]">
+                        <img 
+                            src="/sleepy-yama.jpg" 
+                            alt="Sleepy Yama AI Evaluator" 
+                            className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500" 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                        
+                        {/* Floating Badge */}
+                        <div className="absolute top-6 right-6 bg-[#22C55E]/10 backdrop-blur-xl border border-[#22C55E]/30 rounded-full px-4 py-2 flex items-center gap-2">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#22C55E]"></span>
+                            </span>
+                            <span className="text-xs font-semibold text-[#22C55E]">Live & Ready</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+);
+
 const FeaturedBountiesSection = () => (
     <section id="bounties" className="py-24 sm:py-32 border-b border-white/5">
         <div className="mx-auto max-w-7xl px-6">
@@ -511,6 +563,7 @@ export default function LandingPage() {
                 <HeroSection />
                 <HowItWorksSection />
                 <WhyProofOfWorkSection />
+                <SleepyYama />
                 <FeaturedBountiesSection />
                 <LeaderboardSection />
                 <DashboardBoxesPreview />
