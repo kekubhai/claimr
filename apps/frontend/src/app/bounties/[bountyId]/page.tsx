@@ -1,6 +1,6 @@
 // src/app/bounties/[bountyId]/page.tsx
-import Link from "next/link";
 import { auth0 } from "@/lib/auth0";
+import Navbar from "@/components/Navbar";
 import BountyDetailsClient from "./BountyDetailsClient";
 
 export default async function BountyDetailsPage({ 
@@ -20,11 +20,7 @@ export default async function BountyDetailsPage({
 
   return (
     <div className="min-h-screen bg-black text-white font-mono">
-      <nav className="border-b border-[#1E1E2E] bg-black/90 px-6 py-4 md:px-12">
-        <Link href="/bounties" className="text-sm text-white/50 hover:text-[#22C55E] uppercase tracking-wider transition-colors">
-          ← Back to Bounties
-        </Link>
-      </nav>
+      <Navbar user={session?.user} />
 
       <main className="mx-auto max-w-4xl px-6 py-12 md:px-12">
         <BountyDetailsClient 

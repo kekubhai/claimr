@@ -1,6 +1,5 @@
 import { auth0 } from "@/lib/auth0";
-import Link from "next/link";
-import HeaderProfile from "@/components/HeaderProfile";
+import Navbar from "@/components/Navbar";
 
 export default async function PricingPage() {
   let session = null;
@@ -15,35 +14,7 @@ export default async function PricingPage() {
 
   return (
     <div className="min-h-screen bg-black text-white font-mono">
-      {/* ── NAVBAR ── */}
-      <nav className="sticky top-0 z-50 border-b border-[#1E1E2E] bg-black/90 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-12">
-          <Link href="/" className="text-lg font-bold uppercase tracking-widest hover:text-[#22C55E] transition-colors">
-            CLAIMR
-          </Link>
-          <div className="flex items-center gap-6">
-            <Link href="/bounties" className="text-sm uppercase tracking-wider hover:text-white/70 transition-colors">
-              Bounties
-            </Link>
-            <Link href="/leaderboard" className="text-sm uppercase tracking-wider hover:text-white/70 transition-colors">
-              Leaderboard
-            </Link>
-            <Link href="/pricing" className="text-sm uppercase tracking-wider text-[#22C55E]">
-              Pricing
-            </Link>
-            {user ? (
-              <HeaderProfile user={user} />
-            ) : (
-              <Link
-                href="/auth/login"
-                className="border border-[#1E1E2E] px-4 py-2 text-sm uppercase tracking-wider hover:border-[#22C55E] hover:text-[#22C55E] transition-colors"
-              >
-                [ login ]
-              </Link>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar user={user} />
 
       {/* ── HERO ── */}
       <section className="mx-auto max-w-6xl px-6 pt-20 pb-12 md:px-12 text-center">

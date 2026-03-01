@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { Id } from "../../convex/_generated/dataModel";
-import HeaderProfile from "@/components/HeaderProfile";
+import Navbar from "@/components/Navbar";
 import Typewriter from "@/components/Typewriter";
 import CreateUserClient from "./CreateUserClient";
 import UpdateProfileModal from "@/components/UpdateProfileModal";
@@ -80,44 +80,7 @@ export default function DashboardClient({ sessionUser }: { sessionUser: any }) {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* ── NAVBAR ── */}
-      <nav className="sticky top-0 z-50 border-b border-[#1E1E2E] bg-black">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-12">
-          <a href="#" className="text-lg font-bold uppercase tracking-widest cursor-pointer hover:text-[#22C55E] transition-colors">
-            CLAIMR
-          </a>
-          <div className="flex items-center gap-6">
-            <a href="/bounties" className="text-sm uppercase tracking-wider cursor-pointer hover:text-white/70 transition-colors">
-              Bounties
-            </a>
-            <a href="/leaderboard" className="text-sm uppercase tracking-wider cursor-pointer hover:text-white/70 transition-colors">
-              Leaderboard
-            </a>
-            <a href="/pricing" className="text-sm uppercase tracking-wider cursor-pointer hover:text-white/70 transition-colors">
-              Pricing
-            </a>
-            {githubUsername ? (
-              <a href={`/projects?gh=${githubUsername}`} className="text-sm uppercase tracking-wider cursor-pointer hover:text-white/70 transition-colors">
-                Projects
-              </a>
-            ) : (
-              <button onClick={() => setProfileModalOpen(true)} className="text-sm uppercase tracking-wider cursor-pointer hover:text-white/70 transition-colors">
-                Projects
-              </button>
-            )}
-            {sessionUser ? (
-              <HeaderProfile user={sessionUser} />
-            ) : (
-              <a
-                href="/auth/login"
-                className="border border-[#1E1E2E] px-4 py-2 text-sm uppercase tracking-wider cursor-pointer hover:border-[#22C55E] hover:text-[#22C55E] transition-colors"
-              >
-                [ login ]
-              </a>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar user={sessionUser} />
 
       <div className="mx-auto max-w-6xl px-6 md:px-12">
         <CreateUserClient user={sessionUser} />
