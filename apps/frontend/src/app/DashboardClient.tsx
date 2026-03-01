@@ -7,18 +7,48 @@ import HeaderProfile from "@/components/HeaderProfile";
 import Typewriter from "@/components/Typewriter";
 import CreateUserClient from "./CreateUserClient";
 import UpdateProfileModal from "@/components/UpdateProfileModal";
-import { useState } from "react";
-
-const navLinks = ["About", "Projects", "Contact"];
+import { useEffect, useState } from "react";
 
 export default function DashboardClient({ sessionUser }: { sessionUser: any }) {
-  const dashboardData = useQuery(api.userFunctions.getUserDetails, {
-    email: sessionUser?.email ?? "",
-  });
+  const addToDb = useMutation(api.userFunctions.createUser);
+  
+  // 1. Add a state to track the mutation status
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  // 2. Run the query normally at the top level
+  const dashboardData = useQuery(
+    api.userFunctions.getUserDetails,
+    sessionUser?.email ? { email: sessionUser.email } : "skip"
+  );
+
+  // 3. Await the mutation inside useEffect, then drop the loading flag
+  useEffect(() => {
+    async function syncUser() {
+      if (sessionUser?.email) {
+        try {
+          await addToDb({
+            name: sessionUser?.name || "Unnamed Operative",
+            email: sessionUser?.email,
+          });
+        } catch (error) {
+          console.error("Failed to sync user:", error);
+        } finally {
+          // Whether it created a new user or the user already existed, we are done checking.
+          setIsInitializing(false); 
+        }
+      } else {
+        // If there's no session user at all, don't hang on the loading screen
+        setIsInitializing(false);
+      }
+    }
+
+    syncUser();
+  }, [sessionUser, addToDb]);
 
   const [profileModalOpen, setProfileModalOpen] = useState(false);
 
-  if (dashboardData === undefined) {
+  // 4. Update your loading check to ALSO wait for isInitializing
+  if (isInitializing || dashboardData === undefined) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <p className="animate-pulse text-sm uppercase tracking-widest text-white/60">
@@ -28,6 +58,7 @@ export default function DashboardClient({ sessionUser }: { sessionUser: any }) {
     );
   }
 
+  // If we get here, initialization is done. If it's STILL null, they really don't exist.
   if (dashboardData === null) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center gap-6">
@@ -44,6 +75,7 @@ export default function DashboardClient({ sessionUser }: { sessionUser: any }) {
     );
   }
 
+  // ... rest of your component rendering
   const { name, bountiesGiven, bountiesSolved, githubUsername, walletAddress, TotalTokens } = dashboardData;
 
   return (

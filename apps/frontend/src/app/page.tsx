@@ -43,6 +43,7 @@ export default async function DashboardPage() {
 
   try {
     session = await auth0.getSession();
+    console.log("Session retrieved successfully:", session);
   } catch (error) {
     const message = error instanceof Error ? error.message : "";
     if (message.includes("Invalid Compact JWE")) {
