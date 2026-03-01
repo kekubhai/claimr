@@ -8,6 +8,12 @@ export const createUser = mutation({
     email: v.string(),
    },
   handler: async (ctx, args) => {
+    if(args.email) {
+        const existingUser = await ctx.db .query("users").filter((q) => q.eq(q.field("email"), args.email)).first();
+        if (existingUser) {
+          return existingUser._id; // Return existing user ID if found
+        }
+    }
     const newId = await ctx.db.insert("users", { name: args.name, email: args.email, TotalTokens: 100 });
     return newId;
   },

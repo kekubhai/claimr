@@ -94,7 +94,7 @@ const Navbar = () => {
 
 const HeroSection = () => {
     return (
-        <section className="lg:h-[90vh] flex items-center relative py-24 sm:py-32 border-b border-white/5">
+        <section className="lg:h-[90vh] flex grayscale items-center relative py-24 sm:py-32 border-b border-white/5">
             <div className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#6366F1] opacity-20 blur-[120px] rounded-full pointer-events-none" />
 
             <div className="mx-auto max-w-7xl px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 relative z-10 w-full items-center">
