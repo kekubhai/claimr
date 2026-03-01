@@ -2,9 +2,13 @@
 
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
+import { useAccount, useWriteContract, useSwitchChain } from "wagmi";
+import { parseEther } from "viem";
+import { sepolia } from "wagmi/chains";
 import { api } from "../../../convex/_generated/api";
 // 1. FIXED: Imported BountyAnalysis instead of BountyData
-import { upliftBounty, type BountyData} from "./uplift";
+import { upliftBounty } from "./uplift";
+import { CONTRACTS, BOUNTY_ESCROW_ABI } from "../../lib/contracts";
 
 type Step = "form" | "analysing" | "review";
 
@@ -40,13 +44,22 @@ export default function UpliftBountyModal({ email }: { email: string }) {
   const [showTemplates, setShowTemplates] = useState(true);
 
   // 2. FIXED: Typed the state as BountyAnalysis so TS knows about score, verdict, and remarks
-  const [analysis, setAnalysis] = useState<any | null>(null);
+  const [analysis, setAnalysis] = useState<{ score: number; verdict: string; remarks: string[] } | null>(null);
   const [aiError, setAiError] = useState<string | null>(null);
+  const [isTransacting, setIsTransacting] = useState(false);
+  const [transactionError, setTransactionError] = useState<string | null>(null);
+
+  // Wagmi hooks for wallet and contract interaction
+  const { isConnected, chainId } = useAccount();
+  const { writeContractAsync } = useWriteContract();
+  const { switchChainAsync } = useSwitchChain();
 
   const resetModal = () => {
     setStep("form");
     setAnalysis(null);
     setAiError(null);
+    setTransactionError(null);
+    setIsTransacting(false);
     setIsOpen(false);
   };
 
@@ -72,19 +85,82 @@ export default function UpliftBountyModal({ email }: { email: string }) {
       return;
     }
 
+    if (!isConnected) {
+      setTransactionError("Please connect your wallet to create a bounty");
+      return;
+    }
+
     try {
+      setIsTransacting(true);
+      setTransactionError(null);
+
+      // Check if on Sepolia network (chainId 11155111)
+      if (chainId !== sepolia.id) {
+        console.log("Switching to Sepolia network...");
+        try {
+          await switchChainAsync({ chainId: sepolia.id });
+        } catch (error) {
+          const errorMessage = error instanceof Error ? error.message : "Failed to switch network";
+          setTransactionError(`Please switch to Sepolia testnet: ${errorMessage}`);
+          setIsTransacting(false);
+          return;
+        }
+      }
+
+      // Convert amount to Wei (as the contract expects)
+      // For now, we'll handle both ETH and other tokens
+      let amountInWei;
+      if (formData.unit === "ETH") {
+        amountInWei = parseEther(formData.amount);
+      } else {
+        // For USDC and other ERC20 tokens, multiply by 10^6 (USDC has 6 decimals)
+        amountInWei = BigInt(parseFloat(formData.amount) * 1e6);
+      }
+
+      // Call the smart contract
+      console.log("Creating bounty with params:", {
+        title: formData.title,
+        description: formData.description,
+        amount: amountInWei.toString(),
+        deadline: BigInt(Math.floor(new Date(formData.endDate).getTime() / 1000)).toString(),
+      });
+
+      const txHash = await writeContractAsync({
+        address: CONTRACTS.BountyEscrow as `0x${string}`,
+        abi: BOUNTY_ESCROW_ABI,
+        functionName: "createBounty",
+        args: [
+          formData.title,
+          formData.description,
+          amountInWei,
+          BigInt(Math.floor(new Date(formData.endDate).getTime() / 1000)), // Convert to Unix timestamp
+        ],
+        value: formData.unit === "ETH" ? parseEther(formData.amount) : undefined,
+        chainId: sepolia.id,
+        gas: BigInt(500000), // Set reasonable gas limit (500k)
+      });
+
+      console.log("Smart contract transaction hash:", txHash);
+      console.log("Transaction sent on Sepolia testnet");
+
+      // Create bounty in database
       await createBounty({
         title: formData.title,
         description: formData.description,
         amount: parseFloat(formData.amount),
         unit: formData.unit,
-        endDate: formData.endDate, 
+        endDate: formData.endDate,
         bountySetter: user._id,
       });
-      console.log("Submitted Globally:", formData);
+
+      console.log("Bounty created with transaction:", txHash);
+      setIsTransacting(false);
       resetModal();
     } catch (error) {
       console.error("Failed to create bounty:", error);
+      const errorMessage = error instanceof Error ? error.message : "Failed to create bounty. Please try again.";
+      setTransactionError(errorMessage);
+      setIsTransacting(false);
     }
   };
 
@@ -261,19 +337,24 @@ export default function UpliftBountyModal({ email }: { email: string }) {
                 </div>
 
                 <div className="flex flex-col gap-3 pt-4">
+                  {transactionError && (
+                    <div className="border border-red-500/50 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                      {transactionError}
+                    </div>
+                  )}
                   <button
                     onClick={handleGlobalSubmit}
-                    disabled={user === undefined}
+                    disabled={user === undefined || isTransacting || !isConnected}
                     className="w-full border border-white px-4 py-3 text-sm uppercase tracking-wider hover:bg-white hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {user === undefined ? "Loading User..." : "Submit Globally"}
+                    {!isConnected ? "Connect Wallet First" : isTransacting ? "Processing Transaction..." : user === undefined ? "Loading User..." : "Submit Globally"}
                   </button>
                   <button
                     onClick={handleAISubmit}
-                    disabled={user === undefined}
+                    disabled={user === undefined || isTransacting || !isConnected}
                     className="w-full border border-[#22C55E] bg-[#22C55E]/10 px-4 py-3 text-sm text-[#22C55E] uppercase tracking-wider hover:bg-[#22C55E] hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Submit to AI then Globally
+                    {!isConnected ? "Connect Wallet First" : isTransacting ? "Processing..." : user === undefined ? "Loading User..." : "Submit to AI then Globally"}
                   </button>
                 </div>
               </form>
@@ -284,7 +365,7 @@ export default function UpliftBountyModal({ email }: { email: string }) {
               <div className="flex flex-col items-center gap-6 px-8 py-16">
                 <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#1E1E2E] border-t-[#22C55E]" />
                 <p className="text-sm uppercase tracking-widest text-white/60">
-                  // running ai analysis…
+                  {/* running ai analysis… */}
                 </p>
               </div>
             )}
@@ -303,7 +384,7 @@ export default function UpliftBountyModal({ email }: { email: string }) {
                       <div className="border border-[#1E1E2E] bg-[#0A0A0F] p-5 space-y-3">
                         <div className="flex items-center justify-between">
                           <span className="text-xs uppercase tracking-widest text-white/50">
-                            // quality score
+                            {/* quality score */}
                           </span>
                           <span
                             className="text-xs font-bold uppercase tracking-widest px-2 py-0.5 border"
@@ -342,7 +423,7 @@ export default function UpliftBountyModal({ email }: { email: string }) {
                       {/* Remarks */}
                       <div className="space-y-2">
                         <p className="text-xs uppercase tracking-widest text-white/50">
-                          // remarks
+                          {/* remarks */}
                         </p>
                         {analysis.remarks.map((remark: string, i: number) => (
                           <div
