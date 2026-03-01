@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import GlowButton from '@/components/ui/GlowButton'
 import { Button } from '@/components/ui/button'
 import { InfiniteSlider } from '@/components/ui/infinite-slider'
 import { ProgressiveBlur } from '@/components/ui/progressive-blur'
@@ -68,24 +69,12 @@ export default function HeroSection() {
                                 } as any)}
                                 className="mt-12 flex flex-col items-center justify-center gap-2 sm:flex-row lg:justify-start"
                             >
-                                <Button
-                                    asChild
-                                    size="lg"
-                                    className="px-8 py-6 rounded-full bg-[#6366F1] text-white font-semibold hover:bg-[#6366F1]/90 transition-all text-base border-0">
-                                    <Link href="/api/auth/login?returnTo=/dashboard">
-                                        <span className="text-nowrap">Start Solving</span>
-                                    </Link>
-                                </Button>
-                                <Button
-                                    key={2}
-                                    asChild
-                                    size="lg"
-                                    variant="outline"
-                                    className="px-8 py-6 rounded-full bg-white/5 border border-white/10 text-white font-semibold hover:bg-white/10 transition-all text-base">
-                                    <Link href="/dashboard">
-                                        <span className="text-nowrap">Post a Bounty</span>
-                                    </Link>
-                                </Button>
+                                <GlowButton href="/api/auth/login?returnTo=/dashboard">
+                                    Start Solving
+                                </GlowButton>
+                                <GlowButton href="/dashboard">
+                                    Post a Bounty
+                                </GlowButton>
                             </AnimatedGroup>
                             <p className="mt-6 text-sm text-[#E5E7EB]/50 font-medium">
                                 Secure payouts powered by Ethereum Sepolia smart contracts

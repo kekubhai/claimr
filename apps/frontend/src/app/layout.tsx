@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import { Auth0Provider } from "@auth0/nextjs-auth0/client";
+import FloatingDots from "@/components/FloatingDots";
 import "./globals.css";
 import { ConvexClientProvider } from "./convexClientProvider";
 
