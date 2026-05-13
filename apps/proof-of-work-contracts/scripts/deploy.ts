@@ -1,6 +1,5 @@
 import hre from "hardhat";
 import { writeFileSync } from "node:fs";
-import { verifyContract } from "@nomicfoundation/hardhat-verify/verify";
 
 async function main() {
   const connection = await hre.network.create();
@@ -73,33 +72,8 @@ async function main() {
   writeFileSync("deployed-addresses.json", JSON.stringify(addresses, null, 2));
   console.log("\nAddresses saved → deployed-addresses.json");
 
-  // Verify on Etherscan (only on live networks)
-  if (connection.networkName !== "hardhat" && connection.networkName !== "localhost") {
-    console.log("\nWaiting 10s then verifying on Etherscan...");
-    await new Promise(r => setTimeout(r, 10_000));
-
-    await verifyDeployedContract(await nft.getAddress(), []);
-    await verifyDeployedContract(await escrow.getAddress(), [deployer.address]);
-    await verifyDeployedContract(await oracle.getAddress(), [await escrow.getAddress()]);
-  }
-}
-
-async function verifyDeployedContract(address: string, constructorArgs: unknown[]) {
-  try {
-    await verifyContract({
-      address,
-      constructorArgs,
-      provider: "etherscan",
-    }, hre);
-    console.log("  ✅ Verified:", address);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    if (message.includes("Already Verified")) {
-      console.log("  ℹ️  Already verified:", address);
-    } else {
-      console.log("  ⚠️  Verification failed:", message);
-    }
-  }
+  // Verification is intentionally manual to avoid shipping unused verifier
+  // dependencies in the contract package.
 }
 
 main().catch((error) => {
