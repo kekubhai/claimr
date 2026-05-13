@@ -1,27 +1,48 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
-//done
+function normalizeEmail(email: string) {
+  return email.trim().toLowerCase();
+}
+
 export const createUser = mutation({
   args: { 
     name: v.string(),
     email: v.string(),
    },
   handler: async (ctx, args) => {
-    const newId = await ctx.db.insert("users", { name: args.name, email: args.email, TotalTokens: 100 });
+    const email = normalizeEmail(args.email);
+    if (!email) {
+      throw new Error("Email is required");
+    }
+
+    const existingUser = await ctx.db
+      .query("users")
+      .withIndex("by_email", (q) => q.eq("email", email))
+      .first();
+
+    if (existingUser) {
+      return existingUser._id;
+    }
+
+    const newId = await ctx.db.insert("users", {
+      name: args.name.trim() || "Unnamed Operative",
+      email,
+      TotalTokens: 100,
+    });
     return newId;
   },
 });
 
-//done
 export const getUserDetails = query({
   args: {
     email: v.string(),
   },
   handler: async (ctx, args) => {
+    const email = normalizeEmail(args.email);
     const userDetails = await ctx.db
       .query("users")
-      .filter((q) => q.eq(q.field("email"), args.email))
+      .withIndex("by_email", (q) => q.eq("email", email))
       .first();
 
     if (!userDetails) {
@@ -54,9 +75,10 @@ export const updateUserInfo = mutation({
     WalletAddress: v.string(),
   },
   handler: async (ctx, args) => {
+    const email = normalizeEmail(args.email);
     const userDetails = await ctx.db
       .query("users")
-      .filter((q) => q.eq(q.field("email"), args.email))
+      .withIndex("by_email", (q) => q.eq("email", email))
       .first();
 
     if (!userDetails) {
@@ -64,11 +86,10 @@ export const updateUserInfo = mutation({
     }
 
     await ctx.db.patch(userDetails._id, {
-      githubUsername: args.githubUsername,
-      walletAddress: args.WalletAddress,
+      githubUsername: args.githubUsername.trim(),
+      walletAddress: args.WalletAddress.trim(),
     });
 
-    // FIX 2: Return something consistently so the frontend knows it succeeded
     return userDetails._id; 
   },
 });

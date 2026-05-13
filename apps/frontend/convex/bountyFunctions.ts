@@ -2,6 +2,27 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 
+function assertPositiveAmount(amount: number) {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new Error("Bounty amount must be greater than zero.");
+  }
+}
+
+function assertFutureEndDate(endDate: unknown) {
+  if (typeof endDate !== "string" && typeof endDate !== "number") {
+    return;
+  }
+
+  const timestamp = new Date(endDate).getTime();
+  if (!Number.isFinite(timestamp)) {
+    throw new Error("Invalid bounty end date.");
+  }
+
+  if (timestamp <= Date.now()) {
+    throw new Error("Bounty end date must be in the future.");
+  }
+}
+
 export const createBounty = mutation({
   args: { 
     title: v.string(),
@@ -12,6 +33,16 @@ export const createBounty = mutation({
     bountySetter: v.id("users"),
    },
   handler: async (ctx, args) => {
+    const title = args.title.trim();
+    const description = args.description.trim();
+    const unit = args.unit.trim();
+
+    if (!title || !description || !unit) {
+      throw new Error("Title, description, and unit are required.");
+    }
+    assertPositiveAmount(args.amount);
+    assertFutureEndDate(args.endDate);
+
     // 1. Fetch the user setting the bounty
     const setter = await ctx.db.get(args.bountySetter);
     if (!setter) throw new Error("Setter not found");
@@ -31,6 +62,9 @@ export const createBounty = mutation({
     // 4. Create the bounty with the funds locked in escrow
     const BountyId = await ctx.db.insert("bounty", { 
       ...args, 
+      title,
+      description,
+      unit,
       escrowAmount: args.amount, // Lock the funds here
       bountyStatus: "active", 
       amountStatus: "escrowed"   // Mark as safely held
@@ -46,11 +80,46 @@ export const createSolution = mutation({
     bountyId: v.id("bounty"),
     hunterId: v.id("users"),
     proof: v.any(),
-    score : v.number(),
-    remarks : v.string(),
+    score: v.optional(v.number()),
+    remarks: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const solutionId = await ctx.db.insert("solutions", { bountyId: args.bountyId, hunterId: args.hunterId, proof: args.proof, status: "submitted", score: args.score, remarks: args.remarks });
+    if (typeof args.proof !== "string" || !args.proof.trim()) {
+      throw new Error("Submission proof is required.");
+    }
+
+    const bounty = await ctx.db.get(args.bountyId);
+    if (!bounty) throw new Error("Bounty not found");
+    if (bounty.bountyStatus !== "active") {
+      throw new Error("Bounty is not accepting submissions.");
+    }
+    assertFutureEndDate(bounty.endDate);
+
+    const hunter = await ctx.db.get(args.hunterId);
+    if (!hunter) throw new Error("Hunter not found");
+    if (bounty.bountySetter === hunter._id) {
+      throw new Error("Bounty setter cannot submit a solution.");
+    }
+
+    const existingSubmission = await ctx.db
+      .query("solutions")
+      .withIndex("by_bounty_hunter", (q) =>
+        q.eq("bountyId", args.bountyId).eq("hunterId", args.hunterId)
+      )
+      .first();
+
+    if (existingSubmission) {
+      throw new Error("You have already submitted a solution for this bounty.");
+    }
+
+    const solutionId = await ctx.db.insert("solutions", {
+      bountyId: args.bountyId,
+      hunterId: args.hunterId,
+      proof: args.proof.trim(),
+      status: "submitted",
+      score: 0,
+      remarks: "Pending setter review",
+    });
     return solutionId;
   },
 });
@@ -115,6 +184,7 @@ export const getAllBounties = query({
 export const acceptSolution = mutation({
   args: {
     solutionId: v.id("solutions"),
+    setterId: v.id("users"),
   },
   handler: async (ctx, args) => {
     // 1. Get all the records we need
@@ -123,10 +193,16 @@ export const acceptSolution = mutation({
 
     const bounty = await ctx.db.get(solution.bountyId);
     if (!bounty) throw new Error("Bounty not found");
+    if (bounty.bountySetter !== args.setterId) {
+      throw new Error("Only the bounty setter can accept a solution.");
+    }
     
     // Prevent double-paying if clicked twice
     if (bounty.bountyStatus === "closed") {
       throw new Error("Bounty is already closed and paid out.");
+    }
+    if (solution.status !== "submitted") {
+      throw new Error("Solution is not eligible for acceptance.");
     }
 
     const hunter = await ctx.db.get(solution.hunterId);

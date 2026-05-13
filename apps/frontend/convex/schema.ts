@@ -23,7 +23,7 @@ export default defineSchema({
     walletAddress : v.optional(v.string()),
     githubUsername : v.optional(v.string()),
     TotalTokens : v.optional(v.number()),
-  }),
+  }).index("by_email", ["email"]),
 
   solutions: defineTable({
     bountyId: v.id("bounty"),
@@ -35,4 +35,5 @@ export default defineSchema({
   })
   .index("by_bounty", ["bountyId"])
   .index("by_hunter", ["hunterId"])
+  .index("by_bounty_hunter", ["bountyId", "hunterId"])
 });

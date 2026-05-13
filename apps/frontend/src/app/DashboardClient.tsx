@@ -223,7 +223,12 @@ export default function DashboardClient({ sessionUser }: { sessionUser: any }) {
           ) : (
             <div className="grid gap-6">
               {bountiesGiven.map((bounty: any) => (
-                <SetterBountyCard key={bounty._id} bountyId={bounty._id} fallback={bounty} />
+                <SetterBountyCard
+                  key={bounty._id}
+                  bountyId={bounty._id}
+                  setterId={dashboardData._id}
+                  fallback={bounty}
+                />
               ))}
             </div>
           )}
@@ -244,7 +249,15 @@ export default function DashboardClient({ sessionUser }: { sessionUser: any }) {
 
 
 // ── SETTER BOUNTY CARD (Shows Submissions) ──
-export function SetterBountyCard({ bountyId, fallback }: { bountyId: Id<"bounty">, fallback: any }) {
+export function SetterBountyCard({
+  bountyId,
+  setterId,
+  fallback,
+}: {
+  bountyId: Id<"bounty">;
+  setterId: Id<"users">;
+  fallback: any;
+}) {
   const data = useQuery(api.bountyFunctions.getBountyDetailsAfterEnd, { bountyId });
   const acceptSolution = useMutation(api.bountyFunctions.acceptSolution);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -258,7 +271,7 @@ export function SetterBountyCard({ bountyId, fallback }: { bountyId: Id<"bounty"
     
     setProcessingId(solutionId);
     try {
-      await acceptSolution({ solutionId });
+      await acceptSolution({ solutionId, setterId });
     } catch (error: any) {
       console.error("Failed to accept solution:", error);
       alert(error.message || "Failed to process transaction.");

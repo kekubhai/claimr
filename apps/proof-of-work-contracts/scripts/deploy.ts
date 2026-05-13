@@ -1,4 +1,6 @@
-const hre = require("hardhat");
+import hre from "hardhat";
+import { writeFileSync } from "node:fs";
+import { verifyContract } from "@nomicfoundation/hardhat-verify/verify";
 
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
@@ -58,7 +60,6 @@ async function main() {
   console.log("AIOracle       :", await oracle.getAddress());
 
   // Save addresses for frontend / backend
-  const { writeFileSync } = require("fs");
   const addresses = {
     network: hre.network.name,
     chainId: (await hre.ethers.provider.getNetwork()).chainId.toString(),
@@ -75,25 +76,26 @@ async function main() {
     console.log("\nWaiting 10s then verifying on Etherscan...");
     await new Promise(r => setTimeout(r, 10_000));
 
-    await verifyContract(await nft.getAddress(), []);
-    await verifyContract(await escrow.getAddress(), [deployer.address]);
-    await verifyContract(await oracle.getAddress(), [await escrow.getAddress()]);
+    await verifyDeployedContract(await nft.getAddress(), []);
+    await verifyDeployedContract(await escrow.getAddress(), [deployer.address]);
+    await verifyDeployedContract(await oracle.getAddress(), [await escrow.getAddress()]);
   }
 }
 
-//@ts-ignore
-async function verifyContract(address, constructorArgs) {
+async function verifyDeployedContract(address: string, constructorArgs: unknown[]) {
   try {
-    await hre.run("verify:verify", {
+    await verifyContract({
       address,
-      constructorArguments: constructorArgs,
-    });
+      constructorArgs,
+      provider: "etherscan",
+    }, hre);
     console.log("  ✅ Verified:", address);
-  } catch (e: any) {
-    if (e.message.includes("Already Verified")) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    if (message.includes("Already Verified")) {
       console.log("  ℹ️  Already verified:", address);
     } else {
-      console.log("  ⚠️  Verification failed:", e.message);
+      console.log("  ⚠️  Verification failed:", message);
     }
   }
 }

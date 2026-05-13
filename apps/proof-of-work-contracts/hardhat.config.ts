@@ -1,9 +1,10 @@
-import { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox-viem";
+import { defineConfig } from "hardhat/config";
+import hardhatToolboxMochaEthers from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-const config: HardhatUserConfig = {
+export default defineConfig({
+  plugins: [hardhatToolboxMochaEthers],
   solidity: {
     profiles: {
       default: {
@@ -25,8 +26,10 @@ const config: HardhatUserConfig = {
       chainId: 11155111,
     },
   },
-  etherscan: {
-    apiKey: { sepolia: process.env.ETHERSCAN_API_KEY ?? "" },
+  verify: {
+    etherscan: {
+      apiKey: process.env.ETHERSCAN_API_KEY ?? "",
+    },
   },
   paths: {
     sources: "./contracts",
@@ -34,6 +37,4 @@ const config: HardhatUserConfig = {
     cache: "./cache",
     artifacts: "./artifacts",
   },
-};
-
-export default config;
+});
