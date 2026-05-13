@@ -3,32 +3,34 @@ import { writeFileSync } from "node:fs";
 import { verifyContract } from "@nomicfoundation/hardhat-verify/verify";
 
 async function main() {
-  const [deployer] = await hre.ethers.getSigners();
+  const connection = await hre.network.create();
+  const { ethers } = connection;
+  const [deployer] = await ethers.getSigners();
 
   console.log("════════════════════════════════════════");
   console.log("  ProofOfWork — Deployment Script");
   console.log("════════════════════════════════════════");
   console.log("Deployer :", deployer.address);
-  console.log("Network  :", hre.network.name);
-  console.log("Balance  :", hre.ethers.formatEther(await hre.ethers.provider.getBalance(deployer.address)), "ETH\n");
+  console.log("Network  :", connection.networkName);
+  console.log("Balance  :", ethers.formatEther(await ethers.provider.getBalance(deployer.address)), "ETH\n");
 
   // ── 1. Deploy ProofOfWorkNFT ──────────────────
   console.log("1/3  Deploying ProofOfWorkNFT...");
-  const NFT = await hre.ethers.getContractFactory("ProofOfWorkNFT");
+  const NFT = await ethers.getContractFactory("ProofOfWorkNFT");
   const nft = await NFT.deploy();
   await nft.waitForDeployment();
   console.log("     ✅ ProofOfWorkNFT:", await nft.getAddress());
 
   // ── 2. Deploy BountyEscrow ────────────────────
   console.log("2/3  Deploying BountyEscrow...");
-  const Escrow = await hre.ethers.getContractFactory("BountyEscrow");
+  const Escrow = await ethers.getContractFactory("BountyEscrow");
   const escrow = await Escrow.deploy(deployer.address); // deployer = fee recipient for now
   await escrow.waitForDeployment();
   console.log("     ✅ BountyEscrow:", await escrow.getAddress());
 
   // ── 3. Deploy AIOracle ────────────────────────
   console.log("3/3  Deploying AIOracle...");
-  const Oracle = await hre.ethers.getContractFactory("AIOracle");
+  const Oracle = await ethers.getContractFactory("AIOracle");
   const oracle = await Oracle.deploy(await escrow.getAddress());
   await oracle.waitForDeployment();
   console.log("     ✅ AIOracle:", await oracle.getAddress());
@@ -61,8 +63,8 @@ async function main() {
 
   // Save addresses for frontend / backend
   const addresses = {
-    network: hre.network.name,
-    chainId: (await hre.ethers.provider.getNetwork()).chainId.toString(),
+    network: connection.networkName,
+    chainId: (await ethers.provider.getNetwork()).chainId.toString(),
     ProofOfWorkNFT: await nft.getAddress(),
     BountyEscrow: await escrow.getAddress(),
     AIOracle: await oracle.getAddress(),
@@ -72,7 +74,7 @@ async function main() {
   console.log("\nAddresses saved → deployed-addresses.json");
 
   // Verify on Etherscan (only on live networks)
-  if (hre.network.name !== "hardhat" && hre.network.name !== "localhost") {
+  if (connection.networkName !== "hardhat" && connection.networkName !== "localhost") {
     console.log("\nWaiting 10s then verifying on Etherscan...");
     await new Promise(r => setTimeout(r, 10_000));
 

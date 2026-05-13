@@ -1,13 +1,14 @@
 import { expect } from "chai";
-import { ethers } from "hardhat";
-import { time } from "@nomicfoundation/hardhat-network-helpers";
-import { BountyEscrow, ProofOfWorkNFT, AIOracle } from "../typechain-types.js";
-import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers";
+import { network } from "hardhat";
+import type { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/types";
+
+const { ethers, networkHelpers } = await network.create();
+const { time } = networkHelpers;
 
 describe("ProofOfWork — Full Test Suite", function () {
-  let escrow: BountyEscrow;
-  let nft: ProofOfWorkNFT;
-  let oracle: AIOracle;
+  let escrow: any;
+  let nft: any;
+  let oracle: any;
   let owner: HardhatEthersSigner;
   let poster: HardhatEthersSigner;
   let student1: HardhatEthersSigner;
@@ -21,13 +22,13 @@ describe("ProofOfWork — Full Test Suite", function () {
     [owner, poster, student1, student2, feeRecipient] = await ethers.getSigners();
 
     const NFT = await ethers.getContractFactory("ProofOfWorkNFT");
-    nft = (await NFT.deploy()) as unknown as ProofOfWorkNFT;
+    nft = await NFT.deploy();
 
     const Escrow = await ethers.getContractFactory("BountyEscrow");
-    escrow = (await Escrow.deploy(feeRecipient.address)) as unknown as BountyEscrow;
+    escrow = await Escrow.deploy(feeRecipient.address);
 
     const Oracle = await ethers.getContractFactory("AIOracle");
-    oracle = (await Oracle.deploy(await escrow.getAddress())) as unknown as AIOracle;
+    oracle = await Oracle.deploy(await escrow.getAddress());
 
     // Wire up
     await nft.setBountyEscrow(await escrow.getAddress());
