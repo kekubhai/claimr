@@ -4,16 +4,22 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const config: HardhatUserConfig = {
-  //@ts-ignore
   solidity: {
-    version: "0.8.20",
-    settings: {
-      optimizer: { enabled: true, runs: 200 },
+    profiles: {
+      default: {
+        version: "0.8.24",
+        settings: {
+          evmVersion: "cancun",
+          viaIR: true,
+          optimizer: { enabled: true, runs: 200 },
+        },
+      },
     },
   },
   networks: {
-    hardhat: { chainId: 31337 },
+    hardhat: { type: "edr-simulated", chainId: 31337 },
     sepolia: {
+      type: "http",
       url: process.env.SEPOLIA_RPC_URL ?? "https://rpc.ankr.com/eth_sepolia",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 11155111,
