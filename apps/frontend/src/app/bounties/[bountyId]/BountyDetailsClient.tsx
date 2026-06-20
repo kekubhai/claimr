@@ -1,10 +1,12 @@
 // src/app/bounties/[bountyId]/BountyDetailsClient.tsx
 "use client";
 
+import { useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import SubmitSolutionModal from "./SubmitSolutionModal";
+import ClaimWithProofModal from "./ClaimWithProofModal";
 import BountyQA from "./BountyQA";
 
 // ── Local mock & hardcoded bounty data for non-Convex IDs ──
@@ -96,6 +98,7 @@ export default function BountyDetailsClient({
   bountyId: string;
   userEmail?: string | null;
 }){
+  const [claimModalOpen, setClaimModalOpen] = useState(false);
   const isReal = isConvexId(bountyId);
 
   // Only query Convex for real IDs — pass "skip" for local bounties
@@ -233,24 +236,50 @@ export default function BountyDetailsClient({
             </div>
           </div>
 
-         {resolved.endDate < Date.now() || resolved.amountStatus === "RELEASED" ? (
-            <div className="w-full border border-red-500/40 bg-red-500/10 px-6 py-4 text-center">
-              <span className="text-sm font-bold text-red-400 uppercase tracking-widest">
-                [ Time_Is_Over ]
-              </span>
-              <p className="text-[10px] text-red-400/60 uppercase tracking-widest mt-1">
-                This bounty is no longer accepting submissions
-              </p>
+          {resolved.endDate < Date.now() || resolved.amountStatus === "RELEASED" ? (
+            <div className="space-y-4">
+              <div className="w-full border border-red-500/40 bg-red-500/10 px-6 py-4 text-center">
+                <span className="text-sm font-bold text-red-400 uppercase tracking-widest">
+                  [ Time_Is_Over ]
+                </span>
+                <p className="text-[10px] text-red-400/60 uppercase tracking-widest mt-1">
+                  This bounty is no longer accepting submissions
+                </p>
+              </div>
+              {/* If bounty is closed and user is the winner, offer shielded claim */}
+              {resolved.bountyStatus === "closed" && userEmail && (
+                <button
+                  onClick={() => setClaimModalOpen(true)}
+                  className="w-full border border-[#22C55E] bg-[#22C55E]/10 px-6 py-4 text-sm font-bold text-[#22C55E] uppercase tracking-widest hover:bg-[#22C55E] hover:text-black transition-colors"
+                >
+                  [ Claim_with_Zero-Knowledge_Proof ]
+                </button>
+              )}
             </div>
           ) : (
-            <SubmitSolutionModal
-              // @ts-expect-error - local mock bounties use string IDs but Convex expects Id<\"bounty\">
-              bountyId={resolved._id}
-              bountyTitle={resolved.title}
-              bountyDescription={resolved.description}
-              userEmail={userEmail}
-            />
+            <>
+              <SubmitSolutionModal
+                // @ts-expect-error - local mock bounties use string IDs but Convex expects Id<\"bounty\">
+                bountyId={resolved._id}
+                bountyTitle={resolved.title}
+                bountyDescription={resolved.description}
+                userEmail={userEmail}
+              />
+              <button
+                onClick={() => setClaimModalOpen(true)}
+                className="w-full border border-[#1E1E2E] px-6 py-3 text-xs text-white/50 uppercase tracking-widest hover:border-[#22C55E] hover:text-[#22C55E] transition-colors"
+              >
+                [ I'm the Winner — Claim with ZK Proof ]
+              </button>
+            </>
           )}
+
+          <ClaimWithProofModal
+            bountyId={resolved._id}
+            bountyTitle={resolved.title}
+            isOpen={claimModalOpen}
+            onClose={() => setClaimModalOpen(false)}
+          />
         </div>
       </div>
 
