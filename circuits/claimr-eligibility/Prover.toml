@@ -1,0 +1,13 @@
+# ── Test vectors for a valid proof (honest solver) ──────────────
+#
+# Generate with:  nargo prove --prover-name claimr_eligibility
+#
+# The solver's witness:
+solverSecret       = "42"
+solverWalletKey    = "99"
+evaluatorSignature = "12345"
+
+# Public inputs (computed by the circuit, also output in Verifier.toml):
+bountyId               = "1"
+nullifierHash          = "594180838"        # double_claim(1, 42)
+evaluatorSignatureHash = "70943545406405"   # compute_signature_hash(1, 99, 12345)

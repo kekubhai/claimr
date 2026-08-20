@@ -1,0 +1,23 @@
+[package]
+name = "claimr-verifier"
+version = "0.1.0"
+edition = "2021"
+description = "Soroban SettlementAdapter — BN254 Groth16 verifier + escrow for ClaimR"
+
+[lib]
+crate-type = ["cdylib"]
+doctest = false
+
+[dependencies]
+soroban-sdk = { version = "26.0.0", features = ["bn254"] }
+
+[profile.release]
+opt-level = "z"
+overflow-checks = true
+debug = 0
+strip = "symbols"
+codegen-units = 1
+lto = true
+
+[features]
+testutils = ["soroban-sdk/testutils"]

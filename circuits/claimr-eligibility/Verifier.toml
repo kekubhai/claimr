@@ -1,0 +1,10 @@
+# ── Public inputs the verifier (Soroban contract) checks ────────
+#
+# Verifier uses these to validate the proof. They are the same as the
+# `pub` fields in main.nr, and the Soroban contract receives them as
+# the `publicSignals` array from the SettlementAdapter interface.
+#
+# These values must match what the proving backend outputs to `public.json`.
+bountyId               = "1"
+nullifierHash          = "594180838"
+evaluatorSignatureHash = "70943545406405"

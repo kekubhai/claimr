@@ -1,0 +1,11 @@
+[package]
+name = "claimr_eligibility"
+version = "0.1.0"
+description = "ClaimR ZK circuit: winner-eligibility + nullifier-based double-claim prevention"
+authors = ["ClaimR"]
+
+[field]
+# BN254 scalar field — matches the curve used by Soroban's BN254 host functions
+backend = "bn254"
+
+[dependencies]
