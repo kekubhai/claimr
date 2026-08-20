@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from 'react';
-import { 
-  isConnected, 
-  getPublicKey, 
-  signTransaction 
-} from '@stellar/freighter-api';
+import { useEffect, useState } from "react";
+import {
+  isConnected as isFreighterInstalled,
+  getAddress,
+  requestAccess,
+} from "@stellar/freighter-api";
 
 interface FreighterConnectButtonProps {
   onWalletConnected?: (address: string) => void;
@@ -19,38 +19,40 @@ export default function FreighterConnectButton({
   className = "border border-[#22C55E] text-[#22C55E] px-4 py-3 text-xs uppercase tracking-wider hover:bg-[#22C55E] hover:text-black transition-colors",
 }: FreighterConnectButtonProps) {
   const [address, setAddress] = useState<string | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
+  const [walletConnected, setWalletConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isFreighterAvailable, setIsFreighterAvailable] = useState(false);
 
   useEffect(() => {
-    // Check if Freighter is available
     const checkFreighter = async () => {
       try {
-        const isAvailable = await isConnected();
-        setIsFreighterAvailable(isAvailable);
-        
-        if (isAvailable) {
-          const walletAddress = await getPublicKey();
-          if (walletAddress) {
-            setAddress(walletAddress);
-            setIsConnected(true);
-            onWalletConnected?.(walletAddress);
-          }
+        const installed = await isFreighterInstalled();
+        const available = Boolean(installed.isConnected && !installed.error);
+        setIsFreighterAvailable(available);
+
+        if (!available) return;
+
+        const result = await getAddress();
+        if (result.address && !result.error) {
+          setAddress(result.address);
+          setWalletConnected(true);
+          onWalletConnected?.(result.address);
         }
       } catch (err) {
-        console.error('Freighter check failed:', err);
+        console.error("Freighter check failed:", err);
         setIsFreighterAvailable(false);
       }
     };
 
-    checkFreighter();
+    void checkFreighter();
   }, [onWalletConnected]);
 
   const handleConnect = async () => {
     if (!isFreighterAvailable) {
-      setError('Freighter wallet not detected. Please install Freighter extension.');
+      setError(
+        "Freighter wallet not detected. Please install Freighter extension."
+      );
       return;
     }
 
@@ -58,15 +60,16 @@ export default function FreighterConnectButton({
     setError(null);
 
     try {
-      const walletAddress = await getPublicKey();
-      if (walletAddress) {
-        setAddress(walletAddress);
-        setIsConnected(true);
-        onWalletConnected?.(walletAddress);
+      const result = await requestAccess();
+      if (result.error || !result.address) {
+        throw new Error(result.error?.message || "Access denied");
       }
+      setAddress(result.address);
+      setWalletConnected(true);
+      onWalletConnected?.(result.address);
     } catch (err) {
-      setError('Failed to connect to Freighter wallet');
-      console.error('Freighter connection error:', err);
+      setError("Failed to connect to Freighter wallet");
+      console.error("Freighter connection error:", err);
     } finally {
       setIsConnecting(false);
     }
@@ -74,11 +77,11 @@ export default function FreighterConnectButton({
 
   const handleDisconnect = () => {
     setAddress(null);
-    setIsConnected(false);
+    setWalletConnected(false);
     onWalletDisconnected?.();
   };
 
-  if (isConnected && address) {
+  if (walletConnected && address) {
     return (
       <div className="flex items-center gap-3 px-4 py-2 border border-[#22C55E] bg-[#22C55E]/10">
         <span className="w-2 h-2 rounded-full bg-[#22C55E]" />
@@ -101,18 +104,18 @@ export default function FreighterConnectButton({
         onClick={handleConnect}
         disabled={isConnecting || !isFreighterAvailable}
         className={className}
-        style={{ width: '100%' }}
+        style={{ width: "100%" }}
       >
         {isConnecting ? "Connecting to Freighter..." : "[ Connect Freighter ]"}
       </button>
 
       {!isFreighterAvailable && (
-        <p className="text-xs text-red-400 mt-1">Freighter wallet not detected. Please install Freighter extension.</p>
+        <p className="text-xs text-red-400 mt-1">
+          Freighter wallet not detected. Please install Freighter extension.
+        </p>
       )}
 
-      {error && (
-        <p className="text-xs text-red-400 mt-1">{error}</p>
-      )}
+      {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
     </div>
   );
 }

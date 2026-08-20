@@ -16,25 +16,28 @@ export default function ConnectWalletButton({
   onWalletDisconnected,
   className = "border border-[#22C55E] text-[#22C55E] px-4 py-3 text-xs uppercase tracking-wider hover:bg-[#22C55E] hover:text-black transition-colors",
 }: ConnectWalletButtonProps) {
-  // Use Freighter for Stellar, MetaMask for Ethereum
-  if (SETTLEMENT_CHAIN === 'stellar') {
-    return <FreighterConnectButton onWalletConnected={onWalletConnected} onWalletDisconnected={onWalletDisconnected} className={className} />;
-  }
-
-  // Ethereum/MetaMask implementation
   const { address, isConnected } = useAccount();
   const { connect, connectors, isPending, error: connectError } = useConnect();
   const { disconnect } = useDisconnect();
 
-  // Auto-trigger MetaMask connection when component mounts
   useEffect(() => {
+    if (SETTLEMENT_CHAIN === "stellar") return;
     if (isConnected && address && onWalletConnected) {
       onWalletConnected(address);
     }
   }, [isConnected, address, onWalletConnected]);
 
-  // Get MetaMask connector
-  const metaMaskConnector = connectors.find(c => c.name === 'MetaMask');
+  if (SETTLEMENT_CHAIN === "stellar") {
+    return (
+      <FreighterConnectButton
+        onWalletConnected={onWalletConnected}
+        onWalletDisconnected={onWalletDisconnected}
+        className={className}
+      />
+    );
+  }
+
+  const metaMaskConnector = connectors.find((c) => c.name === "MetaMask");
 
   const handleConnectMetaMask = () => {
     if (metaMaskConnector) {

@@ -22,4 +22,4 @@ export const SOROBAN_RPC_URL =
   process.env.NEXT_PUBLIC_SOROBAN_RPC_URL || "https://rpc-futurenet.stellar.org";
 
 export const ETH_RPC_URL =
-  process.env.NEXT_PUBLIC_ETH_RPC_URL || "https://rpc.sepolia.org";
+  process.env.NEXT_PUBLIC_ETH_RPC_URL || "http://127.0.0.1:8545";

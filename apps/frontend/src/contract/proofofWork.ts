@@ -1,4 +1,5 @@
 import { BrowserProvider, Contract } from "ethers";
+import { PROOF_OF_WORK_NFT_ADDRESS } from "@/config/evm-contracts";
 
 // 1. Define the ABI for the read functions we need
 const proofOfWorkNftABI = [
@@ -12,7 +13,7 @@ const proofOfWorkNftABI = [
   "function tokenURI(uint256 tokenId) public view returns (string)"
 ];
 
-const NFT_CONTRACT_ADDRESS = "0xYourNFTContractAddressHere";
+const NFT_CONTRACT_ADDRESS = PROOF_OF_WORK_NFT_ADDRESS;
 
 export async function fetchUserAchievements(userAddress: string) {
   try {

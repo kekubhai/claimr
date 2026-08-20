@@ -1,4 +1,5 @@
-import { BrowserProvider, Contract, parseEther } from "ethers";
+import { BrowserProvider, Contract } from "ethers";
+import { BOUNTY_ESCROW_ADDRESS } from "@/config/evm-contracts";
 
 // 1. You only need the ABI for the functions you intend to call
 const bountyEscrowABI = [
@@ -6,7 +7,7 @@ const bountyEscrowABI = [
   "function postBounty(string calldata ipfsHash, uint256 deadline, uint8 category) external payable returns (uint256)"
 ];
 
-const CONTRACT_ADDRESS = "0xYourBountyEscrowContractAddressHere";
+const CONTRACT_ADDRESS = BOUNTY_ESCROW_ADDRESS;
 
 export async function submitBountySolution(bountyId: number, ipfsHash: string) {
   try {
