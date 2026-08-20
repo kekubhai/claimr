@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@auth0/nextjs-auth0": "^4.15.0",
+    "@auth0/nextjs-auth0": "^4.26.0",
     "@google/genai": "^1.43.0",
     "@google/generative-ai": "^0.24.1",
     "@metamask/sdk": "^0.34.0",
@@ -20,6 +20,8 @@
     "@react-three/fiber": "^9.5.0",
     "@react-three/postprocessing": "^3.0.4",
     "@react-three/rapier": "^2.2.0",
+    "@stellar/freighter-api": "^6.0.1",
+    "@stellar/stellar-sdk": "^16.2.0",
     "@tanstack/react-query": "^5.90.21",
     "@wagmi/connectors": "^7.2.1",
     "class-variance-authority": "^0.7.1",
@@ -34,6 +36,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-three": "^0.9.7",
+    "soroban-client": "^1.0.1",
     "tailwind-merge": "^3.5.0",
     "three": "^0.183.2",
     "viem": "^2.46.3",

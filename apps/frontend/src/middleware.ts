@@ -5,29 +5,47 @@ import { auth0 } from "./lib/auth0";
 export const runtime = "nodejs";
 
 export async function middleware(request: NextRequest) {
-  // Let Auth0 handle its own routes first (/auth/*)
-  const authResponse = await auth0.middleware(request);
+  try {
+    // Let Auth0 handle its own routes first (/auth/*)
+    const authResponse = await auth0.middleware(request);
 
-  const { pathname } = request.nextUrl;
+    const { pathname } = request.nextUrl;
 
-  // Skip auth routes and static assets
-  if (pathname.startsWith("/auth")) return authResponse;
+    // Skip auth routes and static assets
+    if (pathname.startsWith("/auth")) return authResponse;
 
-  // Check session
-  const session = await auth0.getSession(request);
-  const isLoggedIn = !!session?.user;
+    // Check session
+    const session = await auth0.getSession(request);
+    const isLoggedIn = !!session?.user;
 
-  // Root path: redirect unauthenticated users to /landing
-  if (pathname === "/" && !isLoggedIn) {
-    return NextResponse.redirect(new URL("/landing", request.url));
+    // Root path: redirect unauthenticated users to /landing
+    if (pathname === "/" && !isLoggedIn) {
+      return NextResponse.redirect(new URL("/landing", request.url));
+    }
+
+    // /landing: redirect authenticated users to /
+    if (pathname === "/landing" && isLoggedIn) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    return authResponse;
+  } catch (error: any) {
+    // Handle JWE/cookie decryption errors gracefully
+    console.error('Middleware error:', error.message);
+    
+    // Clear problematic cookies and continue as unauthenticated
+    const response = NextResponse.next();
+    response.cookies.delete('__session');
+    response.cookies.delete('appSession');
+    
+    // Redirect to landing if trying to access protected routes
+    const { pathname } = request.nextUrl;
+    if (pathname === "/") {
+      return NextResponse.redirect(new URL("/landing", request.url));
+    }
+    
+    return response;
   }
-
-  // /landing: redirect authenticated users to /
-  if (pathname === "/landing" && isLoggedIn) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  return authResponse;
 }
 
 export const config = {

@@ -2,6 +2,8 @@
 
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { useEffect } from 'react';
+import { SETTLEMENT_CHAIN } from '../config/settlement';
+import FreighterConnectButton from './FreighterConnectButton';
 
 interface ConnectWalletButtonProps {
   onWalletConnected?: (address: string) => void;
@@ -14,6 +16,12 @@ export default function ConnectWalletButton({
   onWalletDisconnected,
   className = "border border-[#22C55E] text-[#22C55E] px-4 py-3 text-xs uppercase tracking-wider hover:bg-[#22C55E] hover:text-black transition-colors",
 }: ConnectWalletButtonProps) {
+  // Use Freighter for Stellar, MetaMask for Ethereum
+  if (SETTLEMENT_CHAIN === 'stellar') {
+    return <FreighterConnectButton onWalletConnected={onWalletConnected} onWalletDisconnected={onWalletDisconnected} className={className} />;
+  }
+
+  // Ethereum/MetaMask implementation
   const { address, isConnected } = useAccount();
   const { connect, connectors, isPending, error: connectError } = useConnect();
   const { disconnect } = useDisconnect();
