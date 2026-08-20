@@ -27,8 +27,9 @@ export function createAdapter(chain?: SupportedChain): SettlementAdapter {
   switch (c) {
     case "stellar":
       return new SorobanAdapter(
-        process.env.SOROBAN_CONTRACT_ID || "CCJZ5S6T4X5Y7Q...",
-        process.env.SOROBAN_RPC_URL || "https://rpc-futurenet.stellar.org",
+        process.env.SOROBAN_CONTRACT_ID ||
+          "CAJO3FV7NPDGDIAJVX4ILN54G7W62T5UBGFNVNT44X4KW4GRYQAPA3JZ",
+        process.env.SOROBAN_RPC_URL || "https://soroban-testnet.stellar.org",
       );
     case "ethereum":
       return new EthereumAdapter(

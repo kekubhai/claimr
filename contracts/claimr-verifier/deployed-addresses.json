@@ -1,0 +1,12 @@
+{
+  "network": "testnet",
+  "networkPassphrase": "Test SDF Network ; September 2015",
+  "rpcUrl": "https://soroban-testnet.stellar.org",
+  "claimrVerifier": "CAJO3FV7NPDGDIAJVX4ILN54G7W62T5UBGFNVNT44X4KW4GRYQAPA3JZ",
+  "nativeAssetContract": "CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC",
+  "wasmHash": "30bce12bba6d853cfd55ab8897fb2a64341b902e1d3d7e63dfc737dd945ab6ec",
+  "deployTx": "c8ed3085bc0ca786a9b638017ea2ccd97f619012a4cab2eebf287fb59075ab6d",
+  "initTx": "590287d6a8865190aa31f40841b1bde17bafbb1f900c445c24d052f6398dc743",
+  "explorer": "https://stellar.expert/explorer/testnet/contract/CAJO3FV7NPDGDIAJVX4ILN54G7W62T5UBGFNVNT44X4KW4GRYQAPA3JZ",
+  "deployedAt": "2026-08-20T17:20:00.000Z"
+}

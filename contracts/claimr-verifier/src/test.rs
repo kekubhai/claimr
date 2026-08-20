@@ -1,7 +1,7 @@
 #![cfg(test)]
 
 use soroban_sdk::{Env, Bytes, Address, testutils::Address as _};
-use crate::{ClaimrVerifier, ClaimrVerifierClient, BountyStatus, Error};
+use crate::{ClaimrVerifier, ClaimrVerifierClient, BountyStatus};
 
 fn setup() -> (Env, ClaimrVerifierClient<'static>, Address) {
     let env = Env::default();

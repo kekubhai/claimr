@@ -17,8 +17,7 @@
 #![no_std]
 
 use soroban_sdk::{
-    contract, contractimpl, contracttype, symbol_short,
-    panic_with_error, Address, Bytes, Env, String as SorString,
+    contract, contracterror, contractimpl, contracttype, panic_with_error, Address, Bytes, Env,
 };
 use soroban_sdk::token::TokenClient;
 
@@ -63,9 +62,10 @@ pub struct BountyState {
 //  Error codes
 // ─────────────────────────────────────────────────────────────────
 
-#[derive(Clone, Debug, Eq, PartialEq)]
-#[contracttype]
-pub enum Error {
+#[contracterror]
+#[derive(Copy, Clone, Debug, Eq, PartialEq, PartialOrd, Ord)]
+#[repr(u32)]
+pub enum ClaimrError {
     BountyNotFound = 1,
     BountyNotActive = 2,
     NullifierAlreadySpent = 3,
@@ -89,7 +89,7 @@ impl ClaimrVerifier {
 
     pub fn init(env: Env, asset: Address) {
         if env.storage().instance().has(&DataKey::Asset) {
-            panic_with_error!(&env, Error::NotAuthorized);
+            panic_with_error!(&env, ClaimrError::NotAuthorized);
         }
         env.storage().instance().set(&DataKey::Asset, &asset);
         env.storage().instance().set(&DataKey::BountyCount, &0u64);
@@ -114,7 +114,7 @@ impl ClaimrVerifier {
 
         let count: u64 = env.storage().instance().get(&DataKey::BountyCount).unwrap_or(0);
         if bounty_id >= count {
-            panic_with_error!(&env, Error::BountyNotFound);
+            panic_with_error!(&env, ClaimrError::BountyNotFound);
         }
 
         let asset: Address = env.storage().instance().get(&DataKey::Asset).unwrap();
@@ -157,10 +157,10 @@ impl ClaimrVerifier {
         let mut state: BountyState = env.storage()
             .instance()
             .get(&DataKey::Bounty(bounty_id))
-            .unwrap_or_else(|| panic_with_error!(&env, Error::BountyNotFound));
+            .unwrap_or_else(|| panic_with_error!(&env, ClaimrError::BountyNotFound));
 
         if state.status != BountyStatus::Active {
-            panic_with_error!(&env, Error::BountyNotActive);
+            panic_with_error!(&env, ClaimrError::BountyNotActive);
         }
 
         // ── b. Parse public signals ───────────────────────────
@@ -173,7 +173,7 @@ impl ClaimrVerifier {
         // ── c. Nullifier check (double-claim prevention) ─────
         let nullifier_key = DataKey::Nullifier(nullifier_hash);
         if env.storage().instance().has(&nullifier_key) {
-            panic_with_error!(&env, Error::NullifierAlreadySpent);
+            panic_with_error!(&env, ClaimrError::NullifierAlreadySpent);
         }
 
         // ── d. Verify the Groth16 proof using host functions ──
@@ -201,7 +201,7 @@ impl ClaimrVerifier {
 
         let proof_valid = groth16_verify_using_host_functions(&env, &proof_bytes, &public_signals);
         if !proof_valid {
-            panic_with_error!(&env, Error::ProofVerificationFailed);
+            panic_with_error!(&env, ClaimrError::ProofVerificationFailed);
         }
 
         // ── e. Mark nullifier as spent ────────────────────────
@@ -230,7 +230,7 @@ impl ClaimrVerifier {
         let state: BountyState = env.storage()
             .instance()
             .get(&DataKey::Bounty(bounty_id))
-            .unwrap_or_else(|| panic_with_error!(&env, Error::BountyNotFound));
+            .unwrap_or_else(|| panic_with_error!(&env, ClaimrError::BountyNotFound));
         state.status
     }
 
@@ -272,18 +272,21 @@ impl ClaimrVerifier {
 
 /// Stub: parse a 3-element public signal array from packed bytes.
 /// In production, signals are BN254 scalar field elements (32 bytes each).
+fn read_u64_be(bytes: &Bytes, start: u32) -> u64 {
+    let mut buf = [0u8; 8];
+    bytes.slice(start..start + 8).copy_into_slice(&mut buf);
+    u64::from_be_bytes(buf)
+}
+
 fn parse_public_signals(bytes: &Bytes) -> (u64, u64, u64) {
     if bytes.len() < 24 {
         return (0, 0, 0);
     }
-    let mut buf = [0u8; 8];
-    buf.copy_from_slice(&bytes.slice(0..8));
-    let a = u64::from_be_bytes(buf);
-    buf.copy_from_slice(&bytes.slice(8..16));
-    let b = u64::from_be_bytes(buf);
-    buf.copy_from_slice(&bytes.slice(16..24));
-    let c = u64::from_be_bytes(buf);
-    (a, b, c)
+    (
+        read_u64_be(bytes, 0),
+        read_u64_be(bytes, 8),
+        read_u64_be(bytes, 16),
+    )
 }
 
 /// Stub: decode the actual token amount from the opaque blob.
@@ -292,9 +295,7 @@ fn decode_opaque_amount(opaque: &Bytes) -> i128 {
     if opaque.len() < 8 {
         return 0;
     }
-    let mut buf = [0u8; 8];
-    buf.copy_from_slice(&opaque.slice(0..8));
-    u64::from_be_bytes(buf) as i128
+    read_u64_be(opaque, 0) as i128
 }
 
 /// Stub: Groth16 verification using Soroban BN254 host functions.

@@ -22,7 +22,7 @@ export class SorobanAdapter implements SettlementAdapter {
   private contractId: string;
   private rpcUrl: string;
 
-  constructor(contractId: string, rpcUrl: string = "https://rpc-futurenet.stellar.org") {
+  constructor(contractId: string, rpcUrl: string = "https://soroban-testnet.stellar.org") {
     this.contractId = contractId;
     this.rpcUrl = rpcUrl;
   }
