@@ -233,6 +233,111 @@ This project is currently distributed under the license specified in the reposit
 
 GitHub: https://github.com/kekubhai
 
+## Smart Contract Address
+
+**Stellar/Soroban Contract ID:** `CAJO3FV7NPDGDIAJVX4ILN54G7W62T5UBGFNVNT44X4KW4GRYQAPA3JZ`
+
+This is the deployed `claimr_verifier` contract on Stellar Futurenet that handles:
+- `lock_reward` — escrow reward with commitment hash
+- `verify_and_payout` — verify Groth16 BN254 proof, release funds to winner
+- `bounty_status` — read bounty lifecycle status
+- `nullifier_status` — check if nullifier hash is already spent (double-claim prevention)
+
+## Integration Logic
+
+### 1. Post a Bounty (Lock Reward)
+
+```typescript
+import { createAdapter } from "@claimr/zk-settlement";
+import { generateClaimProof } from "@claimr/zk-settlement";
+
+const adapter = createAdapter("stellar"); // or "ethereum"
+
+// Poster locks reward with commitment hash (hides actual amount)
+const escrowRef = await adapter.lockReward(
+  "bounty_123",                              // bountyId
+  "0xabc123...",                             // commitmentHash = poseidon(rewardAmount)
+  new Uint8Array([...])                      // amountOpaque (encrypted amount for evaluator)
+);
+```
+
+### 2. AI Evaluation & Signature
+
+Off-chain AI evaluator (Gemini) scores submission and signs:
+```typescript
+// Backend signs: message = "claimr_winner" || bountyId || winnerWallet
+const evaluatorSig = await signMessage(
+  `claimr_winner:${bountyId}:${winnerWallet}`,
+  evaluatorPrivateKey
+);
+```
+
+### 3. Winner Generates ZK Proof
+
+```typescript
+const { proofBytes, publicSignals } = await generateClaimProof(
+  "bounty_123",           // bountyId
+  "solver_secret_42",     // solverSecret (preimage of nullifierHash)
+  evaluatorSig            // evaluator's signature attesting winner
+);
+
+// publicSignals = [bountyId, nullifierHash, evaluatorSignatureHash]
+```
+
+### 4. Verify Proof & Claim Reward
+
+```typescript
+const txRef = await adapter.verifyAndPayout(
+  "bounty_123",
+  proofBytes,
+  publicSignals
+);
+// Contract verifies Groth16 via BN254 host functions,
+// checks nullifier not spent, transfers asset to winner
+```
+
+### 5. Check Status
+
+```typescript
+const status = await adapter.getBountyStatus("bounty_123");
+// Returns: "active" | "under_review" | "closed" | "refunded"
+
+const isSpent = await adapter.getNullifierStatus("0xnullifier_hash");
+// Returns: true if already claimed
+```
+
+### Environment Variables
+
+```env
+# Settlement chain: "stellar" | "ethereum"
+NEXT_PUBLIC_SETTLEMENT_CHAIN=stellar
+
+# Soroban (Stellar)
+NEXT_PUBLIC_SOROBAN_CONTRACT_ID=CAJO3FV7NPDGDIAJVX4ILN54G7W62T5UBGFNVNT44X4KW4GRYQAPA3JZ
+NEXT_PUBLIC_SOROBAN_RPC_URL=https://rpc-futurenet.stellar.org
+
+# Ethereum (optional)
+NEXT_PUBLIC_ETH_RPC_URL=https://rpc.sepolia.org
+```
+
+### Running the Integration
+
+```bash
+# Install dependencies
+cd packages/zk-settlement && npm install
+cd apps/frontend && npm install
+
+# Set environment variables
+cp .env.example .env
+# Edit .env with the values above
+
+# Run frontend
+cd apps/frontend && npm run dev
+
+# Build ZK settlement package
+cd packages/zk-settlement && npm run build
+```
+
 ## Repository
 
 [Claimrbro](https://github.com/kekubhai/claimrbro)
